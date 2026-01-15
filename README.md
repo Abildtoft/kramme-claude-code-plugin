@@ -15,6 +15,23 @@ A Claude Code plugin providing tooling for daily workflow tasks. These are the p
 | `/kramme:resolve-review-findings` | Resolve findings from code reviews. Evaluates each finding for scope and validity, implements fixes, and generates a response document. |
 | `/kramme:explore-interview` | Conduct an in-depth interview about a topic/proposal to uncover requirements. Uses structured questioning to explore features, processes, or architecture decisions. |
 
+## Skills
+
+Skills are auto-triggered based on context. Claude will invoke these automatically when the described conditions are met.
+
+| Skill | Trigger Condition |
+|-------|-------------------|
+| `changelog-generator` | Generate user-facing changelogs from git commits, transforming technical commits into clear release notes |
+| `connect-existing-feature-documentation-writer` | Creating or updating documentation for Connect features |
+| `connect-migrate-legacy-store-to-ngrx-component-store` | Migrating legacy CustomStore/FeatureStore to NgRx ComponentStore in Connect monorepo |
+| `connect-modernize-legacy-angular-component` | Modernizing legacy Angular components in Connect monorepo |
+| `markdown-converter` | Converting documents (PDF, Word, Excel, images, audio, etc.) to Markdown using markitdown |
+| `mr-pr-description-generator` | Generating MR/PR descriptions by analyzing git changes, commit history, and Linear issues |
+| `recreate-commits` | Creating a clean branch with narrative-quality commits from the current branch |
+| `reimplement-in-clean-branch` | Recreating a branch with narrative-quality commits in a clean branch |
+| `structured-implementation-workflow` | Detecting LOG.md and OPEN_ISSUES.md files to track complex implementations |
+| `verification-before-completion` | About to claim work is complete/fixed/passing - requires evidence before assertions |
+
 ## Installation
 
 ### From Git URL
