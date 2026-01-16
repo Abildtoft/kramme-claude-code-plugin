@@ -157,6 +157,28 @@ For local development:
 claude /plugin install /path/to/kramme-cc-workflow
 ```
 
+## Updating
+
+For marketplace installs:
+
+```bash
+claude plugin update kramme-cc-workflow@kramme-cc-workflow
+```
+
+For Git or local installs, re-run the install command to pull the latest version:
+
+```bash
+# Git install
+claude /plugin install git+https://github.com/Abildtoft/kramme-cc-workflow
+
+# Local development
+claude /plugin install /path/to/kramme-cc-workflow
+```
+
+Restart Claude Code after updating for changes to take effect.
+
+**Auto-update:** Since Claude Code v2.0.70, auto-update can be enabled per-marketplace.
+
 ## Plugin Structure
 
 ```
