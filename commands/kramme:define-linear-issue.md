@@ -1,0 +1,357 @@
+---
+name: kramme:define-linear-issue
+description: Create a well-structured Linear issue from a description or idea through exhaustive guided refinement
+argument-hint: [description and/or file paths for context]
+---
+
+# Define Linear Issue
+
+Create a well-structured Linear issue through exhaustive interactive refinement. Supports file references for technical context and proactively explores the codebase to inform issue definition.
+
+## Audience Priority
+
+**Primary: Product Team** — The issue must be understandable and compelling to non-technical stakeholders.
+
+**Secondary: Development Team** — Technical context helps engineers, but they determine implementation details.
+
+### Content Priority Order
+
+1. **Problem Statement** - What pain point or opportunity exists?
+2. **Value Proposition** - Why should we invest time in this?
+3. **User/Business Impact** - Who benefits and how?
+4. **Success Criteria** - How do we know we've solved the problem?
+5. **Technical Context** - High-level implementation direction (not detailed how-to)
+
+### Technical Content Guidelines
+
+- Implementation proposals should be **strategic, not tactical**
+- Describe **what** needs to change, not **how** to change it
+- Only include code examples for:
+  - Specific bugs (show the problematic code)
+  - Very concrete, well-defined fixes
+- For new features: describe the approach architecturally
+- Engineers will determine the detailed implementation
+
+## Process Overview
+
+1. **Input Parsing**: Extract description and file paths from arguments
+2. **Linear Context Discovery**: Fetch available teams, labels, and projects
+3. **Existing Issue Search**: Check for duplicate or related Linear issues
+4. **Codebase Exploration**: Search for related implementations and patterns
+5. **Exhaustive Interview**: Multi-round questioning to gather requirements
+6. **Issue Composition**: Draft issue following the template
+7. **Review & Create**: User approval, then create in Linear
+
+## Phase 1: Input Parsing
+
+**Handling `$ARGUMENTS`:**
+- Parse for file paths (anything that looks like a path: contains `/`, ends in common extensions)
+- Remaining text is the description/idea
+- If empty, use `AskUserQuestion` to gather the initial concept
+
+**If file paths provided:**
+1. Read each file using the `Read` tool
+2. Extract relevant context:
+   - What functionality does this code provide?
+   - What patterns or conventions does it follow?
+   - What dependencies or integrations exist?
+3. Store findings for use in interview and issue composition
+
+## Phase 2: Linear Context Discovery
+
+Fetch Linear workspace context to enable informed metadata selection:
+
+1. **Teams**: `mcp__linear__list_teams` - Get available teams for assignment
+2. **Labels**: `mcp__linear__list_issue_labels` - Get available labels for classification
+3. **Projects**: `mcp__linear__list_projects` - Get active projects for association
+
+Store this context for use in Phase 5 (Metadata & Classification round).
+
+## Phase 3: Existing Issue Search
+
+Before creating a new issue, check for existing Linear issues that may already cover this topic:
+
+1. **Search for Duplicates**
+   - Use `mcp__linear__list_issues` with `query` parameter containing keywords from the description
+   - Search across relevant teams identified in Phase 2
+
+2. **Identify Related Issues**
+   - Look for issues that partially overlap with the proposed scope
+   - Find issues that might be blockers or dependencies
+   - Identify issues that could be affected by this work
+
+3. **Present Findings to User**
+   - If potential duplicates found, show them to the user via `AskUserQuestion`:
+     - Option to proceed with new issue (if not truly a duplicate)
+     - Option to update/comment on existing issue instead
+     - Option to link as related issue
+   - If related issues found, note them for the Dependencies section
+
+4. **Decision Point**
+   - If user confirms this is a duplicate → Stop and direct to existing issue
+   - If user wants to update existing issue → Pivot to updating that issue
+   - If user confirms new issue is needed → Continue to Phase 4
+   - Store any related issues for later linking
+
+**Output**: List of related issues to reference, confirmation to proceed with new issue creation.
+
+## Phase 4: Codebase Exploration
+
+Proactively search the repository to inform the issue definition:
+
+1. **Find Related Implementations**
+   - Use `Grep` to search for keywords from the description
+   - Use `Glob` to find files in related areas
+   - Identify existing code that does something similar
+
+2. **Identify Patterns & Conventions**
+   - Look for architectural patterns in related code
+   - Note naming conventions, file organization
+   - Find configuration or setup patterns
+
+3. **Discover Related Components**
+   - Find services, modules, or components that may be affected
+   - Identify integration points
+   - Map dependencies
+
+4. **Find Existing Tests**
+   - Search for test files covering similar functionality
+   - Note testing patterns and conventions
+
+5. **Collect TODOs & FIXMEs**
+   - Search for `TODO`, `FIXME`, `HACK` comments related to the topic
+   - These may inform scope or reveal known issues
+
+**Output**: Summarize findings to share with user and inform interview questions.
+
+## Phase 5: Exhaustive Interview
+
+Conduct a thorough, multi-round interview using `AskUserQuestion`. Provide context before each question explaining why it matters and your recommendation if you have one.
+
+### Round 1: Problem & Value (Most Important)
+
+**This round is critical.** Spend extra time here to deeply understand the "why."
+
+**Questions to cover:**
+- What specific problem or pain point does this solve?
+- Who is affected (end users, customers, internal teams)?
+- How significant is the impact? (frequency, severity, scale)
+- What triggers the need for this change now?
+- What happens if we don't address this? (cost of inaction)
+- What value does solving this deliver? (user benefit, business outcome)
+- How does this align with product/company goals?
+
+**Dig deep on value:**
+- Don't accept vague answers like "it would be nice" or "users want it"
+- Push for concrete impact: numbers, user quotes, business metrics
+- Understand the opportunity cost of NOT doing this
+
+**Context to provide:**
+- Share relevant findings from codebase exploration
+- Reference any related code or patterns discovered
+
+### Round 2: Scope & Boundaries
+
+**Questions to cover:**
+- What is explicitly in scope for this issue?
+- What is explicitly out of scope?
+- Are there related changes that should be separate issues?
+- What is the minimum viable implementation?
+
+**Dig deeper when:**
+- Scope seems too broad for a single issue
+- There are natural breakpoints for phased delivery
+
+### Round 3: Technical Context
+
+**Questions to cover:**
+- Which components/areas are affected? (informed by exploration)
+- Are there dependencies or blocking issues?
+- What existing patterns should be followed?
+- Are there technical constraints to consider?
+
+**Leverage exploration findings:**
+- Present discovered patterns as options
+- Highlight related code that should be considered
+- Note any TODOs/FIXMEs that are relevant
+
+### Round 4: Acceptance Criteria
+
+**Questions to cover:**
+- What defines "done" for this issue?
+- How should this be tested/verified?
+- Are there specific edge cases to handle?
+- What quality criteria must be met?
+
+**Guide toward testable criteria:**
+- Each criterion should be verifiable
+- Include both happy path and error scenarios
+- Consider performance/security if relevant
+
+### Round 5: Metadata & Classification
+
+**Questions to cover:**
+- Which team should own this issue? (present options from Phase 2)
+- What labels apply? (present options from Phase 2)
+- Should this be associated with a project?
+- What priority level is appropriate?
+- Are there related issues (blockers, related work)?
+
+**Use predefined options:**
+- Present actual team names from `list_teams`
+- Present actual labels from `list_issue_labels`
+- Present active projects from `list_projects`
+
+### Adaptive Follow-up
+
+After each round:
+- **Dig deeper** when answers reveal unexpected complexity
+- **Pivot** when answers reveal the problem is different than assumed
+- **Clarify** when answers are ambiguous or contradictory
+
+**Track coverage:**
+```
+Coverage: [Problem: X%] [Scope: X%] [Technical: X%] [Acceptance: X%] [Metadata: X%]
+```
+
+Continue until all dimensions show adequate coverage for a well-defined issue.
+
+## Phase 6: Issue Composition
+
+Draft the issue following this template:
+
+### Title Format
+
+`[Action verb] [what] [where/context]`
+
+**Examples:**
+- "Add dark mode toggle to settings page"
+- "Fix pagination in user list API"
+- "Refactor authentication flow to use OAuth2"
+
+### Description Template
+
+**Note:** The template is ordered by importance for a Product Team audience. Problem and Value come first.
+
+```markdown
+## Problem
+[What pain point or issue exists today]
+[Who is affected and how often]
+[What is the cost/impact of this problem]
+
+## Value Proposition
+[Why solving this matters]
+[What benefit users/business will gain]
+[How this aligns with product goals]
+
+## Goal
+[What success looks like - the desired outcome]
+[Clear statement of the end state]
+
+## Scope
+
+### In Scope
+- [Specific item 1]
+- [Specific item 2]
+- [Specific item 3]
+
+### Out of Scope
+- [Explicitly excluded item 1]
+- [Explicitly excluded item 2]
+
+## Acceptance Criteria
+- [ ] [Testable criterion 1 - user-facing behavior]
+- [ ] [Testable criterion 2 - user-facing behavior]
+- [ ] [Testable criterion 3 - user-facing behavior]
+
+## Edge Cases
+- [Edge case 1]: [Expected behavior]
+- [Edge case 2]: [Expected behavior]
+
+---
+
+## Technical Notes (For Engineering)
+
+### Implementation Proposal
+[High-level approach - what components/areas need changes]
+[Architectural considerations if relevant]
+[Keep this strategic, not detailed implementation steps]
+
+### Affected Areas
+- [Component/module 1]
+- [Component/module 2]
+
+### Patterns to Follow
+[Reference existing patterns in the codebase]
+[Only include code examples for specific bugs or concrete fixes]
+
+### References
+- [Related files: `path/to/file.ts`]
+
+## Dependencies
+- [Blocking issue or prerequisite, if any]
+- [Related issues for context]
+```
+
+**Technical Notes Guidelines:**
+- Keep implementation proposals **high-level** (what, not how)
+- Only include code examples when:
+  - Fixing a specific bug (show the problematic code)
+  - Making a very concrete, well-defined fix
+  - The code example clarifies something that words cannot
+- For new features, describe the approach architecturally, not the implementation details
+- Engineers will determine the detailed implementation
+
+### Metadata to Set
+
+- **Team**: From Round 5 selection
+- **Labels**: From Round 5 selection
+- **Project**: From Round 5 selection (if applicable)
+- **Priority**: From Round 5 selection (if determined)
+- **Related Issues**: From Phase 3 findings (if any)
+
+## Phase 7: Review & Create
+
+1. **Present Draft**
+   - Show the complete issue (title, description, metadata) to the user
+   - Format clearly for review
+
+2. **Allow Refinements**
+   - Ask if any changes are needed
+   - Iterate on feedback until user is satisfied
+
+3. **Create Issue**
+   - Use `mcp__linear__create_issue` with:
+     - `title`: The composed title
+     - `description`: The full markdown description
+     - `team`: Selected team ID or name
+     - `labels`: Array of selected label names
+     - `project`: Selected project (if any)
+     - `priority`: Selected priority (if any)
+
+4. **Return Result**
+   - Provide the created issue URL
+   - Confirm successful creation
+
+## Important Guidelines
+
+1. **Lead with "Why"** - Problem and value proposition are the most important parts. Don't settle for vague justifications.
+2. **Write for Product Team first** - The issue should be compelling to non-technical stakeholders. They read Problem, Value, Goal, Scope, and Acceptance Criteria.
+3. **Technical details are secondary** - Keep implementation proposals high-level. Engineers determine the detailed how.
+4. **Code examples only when necessary** - Only for specific bugs or concrete fixes. New features don't need code examples.
+5. **Check for duplicates first** - Always search existing issues before creating new ones.
+6. **Exhaust the interview** - Don't rush through questions. Especially Round 1 (Problem & Value).
+7. **Use exploration findings strategically** - Reference patterns and affected areas, but don't dump implementation details.
+8. **Craft real options** - Every AskUserQuestion option should be a legitimate choice.
+9. **Connect the dots** - Show how different decisions interact and affect each other.
+10. **Challenge diplomatically** - If scope seems too broad, suggest splitting.
+11. **Get user approval** - Always show the draft before creating the issue.
+
+## Starting the Process
+
+1. Parse `$ARGUMENTS` for file paths and description
+2. If no input provided, ask what issue they want to define
+3. Begin Phase 2 (Linear Context Discovery)
+4. Check for existing issues in Phase 3 before proceeding
+5. Proceed through remaining phases sequentially
+6. End with the created issue URL
