@@ -102,20 +102,20 @@ Install: `brew install trash`
 Marketplace install (recommended):
 
 ```bash
-claude /plugin marketplace add Abildtoft/kramme-claude-code-plugin
-claude /plugin install kramme-cc-workflow@kramme-claude-code-plugin
+claude /plugin marketplace add Abildtoft/kramme-cc-workflow
+claude /plugin install kramme-cc-workflow@kramme-cc-workflow
 ```
 
 Direct Git install:
 
 ```bash
-claude /plugin install git+https://github.com/Abildtoft/kramme-claude-code-plugin
+claude /plugin install git+https://github.com/Abildtoft/kramme-cc-workflow
 ```
 
 For local development:
 
 ```bash
-claude /plugin install /path/to/kramme-claude-code-plugin
+claude /plugin install /path/to/kramme-cc-workflow
 ```
 
 ## Plugin Structure
