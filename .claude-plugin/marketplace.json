@@ -1,0 +1,13 @@
+{
+  "name": "kramme-claude-code-plugin",
+  "owner": {
+    "name": "Abildtoft"
+  },
+  "plugins": [
+    {
+      "name": "kramme-cc-workflow",
+      "source": ".",
+      "description": "Tooling for the workflows that Abildtoft encounters in his daily work"
+    }
+  ]
+}

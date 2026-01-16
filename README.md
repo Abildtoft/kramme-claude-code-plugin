@@ -99,6 +99,15 @@ Install: `brew install trash`
 
 ## Installation
 
+Marketplace install (recommended):
+
+```bash
+claude /plugin marketplace add Abildtoft/kramme-claude-code-plugin
+claude /plugin install kramme-cc-workflow@kramme-claude-code-plugin
+```
+
+Direct Git install:
+
 ```bash
 claude /plugin install git+https://github.com/Abildtoft/kramme-claude-code-plugin
 ```
@@ -114,7 +123,8 @@ claude /plugin install /path/to/kramme-claude-code-plugin
 ```
 kramme-cc-workflow/
 ├── .claude-plugin/
-│   └── plugin.json      # Plugin metadata
+│   ├── plugin.json      # Plugin metadata
+│   └── marketplace.json # Marketplace definition
 ├── commands/            # Slash commands
 ├── agents/              # Specialized subagents
 ├── skills/              # Auto-triggered skills
