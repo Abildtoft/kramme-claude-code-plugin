@@ -50,6 +50,14 @@ Skills are auto-triggered based on context. Claude will invoke these automatical
 | `kramme:structured-implementation-workflow` | Detecting LOG.md and OPEN_ISSUES.md files to track complex implementations |
 | `kramme:verification-before-completion` | About to claim work is complete/fixed/passing - requires evidence before assertions |
 
+## Hooks
+
+Event handlers that run automatically at specific points in the Claude Code lifecycle.
+
+| Hook | Event | Description |
+|------|-------|-------------|
+| `context-links` | Stop | Displays active PR/MR and Linear issue links at the end of messages. Extracts Linear issue ID from branch name (pattern: `{prefix}/{TEAM-ID}-description`) and detects open PRs/MRs for the current branch. |
+
 ## Installation
 
 ### From Git URL
