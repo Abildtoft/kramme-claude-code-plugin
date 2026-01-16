@@ -99,16 +99,14 @@ Install: `brew install trash`
 
 ## Installation
 
-### From Git URL
-
 ```bash
-claude /plugin install git+https://github.com/YOUR_USERNAME/kramme-cc-workflow.git
+claude /plugin install git+https://github.com/Abildtoft/kramme-claude-code-plugin
 ```
 
-### From Local Path (development)
+For local development:
 
 ```bash
-claude /plugin install /path/to/kramme-cc-workflow
+claude /plugin install /path/to/kramme-claude-code-plugin
 ```
 
 ## Plugin Structure
