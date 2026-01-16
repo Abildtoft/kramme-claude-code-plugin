@@ -138,13 +138,20 @@ tests/
 
 ## Installation
 
-### From Git URL
+Marketplace install (recommended):
 
 ```bash
-claude /plugin install git+https://github.com/YOUR_USERNAME/kramme-cc-workflow.git
+claude /plugin marketplace add Abildtoft/kramme-cc-workflow
+claude /plugin install kramme-cc-workflow@kramme-cc-workflow
 ```
 
-### From Local Path (development)
+Direct Git install:
+
+```bash
+claude /plugin install git+https://github.com/Abildtoft/kramme-cc-workflow
+```
+
+For local development:
 
 ```bash
 claude /plugin install /path/to/kramme-cc-workflow
@@ -155,7 +162,8 @@ claude /plugin install /path/to/kramme-cc-workflow
 ```
 kramme-cc-workflow/
 ├── .claude-plugin/
-│   └── plugin.json      # Plugin metadata
+│   ├── plugin.json      # Plugin metadata
+│   └── marketplace.json # Marketplace definition
 ├── commands/            # Slash commands
 ├── agents/              # Specialized subagents
 ├── skills/              # Auto-triggered skills
