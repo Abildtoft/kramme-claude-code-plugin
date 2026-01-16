@@ -53,19 +53,32 @@ Run a comprehensive pull request review using multiple specialized agents, each 
    - Faster for comprehensive review
    - Results come back together
 
-6. **Aggregate Results**
+6. **Validate Relevance**
 
-   After agents complete, summarize:
-   - **Critical Issues** (must fix before merge)
-   - **Important Issues** (should fix)
-   - **Suggestions** (nice to have)
+   After collecting findings from all agents:
+   - Launch **kramme:pr-relevance-validator** with all findings
+   - Validator cross-references each finding against the PR diff
+   - Filters out pre-existing issues and out-of-scope problems
+   - Returns only findings caused by this PR
+
+7. **Aggregate Results**
+
+   After validation, summarize:
+   - **Critical Issues** (must fix before merge) - only validated findings
+   - **Important Issues** (should fix) - only validated findings
+   - **Suggestions** (nice to have) - only validated findings
    - **Positive Observations** (what's good)
+   - **Filtered Issues** (pre-existing or out-of-scope) - shown separately
 
-7. **Provide Action Plan**
+8. **Provide Action Plan**
 
    Organize findings:
    ```markdown
    # PR Review Summary
+
+   ## Relevance Filter
+   - X findings validated as PR-caused
+   - X findings filtered (pre-existing or out-of-scope)
 
    ## Critical Issues (X found)
    - [agent-name]: Issue description [file:line]
@@ -75,6 +88,11 @@ Run a comprehensive pull request review using multiple specialized agents, each 
 
    ## Suggestions (X found)
    - [agent-name]: Suggestion [file:line]
+
+   ## Filtered (Pre-existing/Out-of-scope)
+   <collapsed>
+   - [file:line]: Brief description - Reason filtered
+   </collapsed>
 
    ## Strengths
    - What's well-done in this PR
@@ -143,6 +161,12 @@ Run a comprehensive pull request review using multiple specialized agents, each 
 - Improves clarity and readability
 - Applies project standards
 - Preserves functionality
+
+**kramme:pr-relevance-validator**:
+- Validates findings against PR diff
+- Filters pre-existing issues
+- Filters out-of-scope problems
+- Ensures review focuses on PR changes
 
 ## Tips:
 
