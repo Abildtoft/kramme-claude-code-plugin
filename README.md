@@ -14,6 +14,20 @@ A Claude Code plugin providing tooling for daily workflow tasks. These are the p
 | `/kramme:iterate-pr` | Iterate on a PR/MR until CI passes. Automates the feedback-fix-push-wait cycle for both GitHub and GitLab. |
 | `/kramme:resolve-review-findings` | Resolve findings from code reviews. Evaluates each finding for scope and validity, implements fixes, and generates a response document. |
 | `/kramme:explore-interview` | Conduct an in-depth interview about a topic/proposal to uncover requirements. Uses structured questioning to explore features, processes, or architecture decisions. |
+| `/kramme:review-pr` | Run comprehensive PR review using specialized agents. Supports reviewing comments, tests, errors, types, and code quality. Can run agents sequentially or in parallel. |
+
+## Agents
+
+Specialized subagents for PR review tasks. These are invoked by the `/kramme:review-pr` command or can be used directly via the Task tool.
+
+| Agent | Description |
+|-------|-------------|
+| `kramme:code-reviewer` | Reviews code for bugs, style violations, and CLAUDE.md compliance. Uses confidence scoring (0-100) to filter issues. |
+| `kramme:code-simplifier` | Simplifies code for clarity and maintainability while preserving functionality. Applies project standards automatically. |
+| `kramme:comment-analyzer` | Analyzes code comments for accuracy, completeness, and long-term maintainability. Guards against comment rot. |
+| `kramme:pr-test-analyzer` | Reviews test coverage quality and completeness. Focuses on behavioral coverage and critical gaps. |
+| `kramme:silent-failure-hunter` | Identifies silent failures, inadequate error handling, and inappropriate fallbacks. Zero tolerance for swallowed errors. |
+| `kramme:type-design-analyzer` | Analyzes type design for encapsulation, invariant expression, usefulness, and enforcement. Rates each dimension 1-10. |
 
 ## Skills
 
