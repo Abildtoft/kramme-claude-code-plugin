@@ -24,7 +24,7 @@ Orchestrate the creation of a clean, well-documented draft PR by:
 [Platform Detection] -> Ambiguous? -> Ask user
     |
     v
-[Branch Handling] -> On main? -> Ask for branch name
+[Branch Handling] -> On main? -> Linear issue? -> Use Linear branch name / Ask for branch name
     |
     v
 [Changes Check] -> No changes? -> Abort
@@ -180,6 +180,105 @@ If this fails, try `main` then `master`.
 ### 3.3 Branch Decision
 
 **If current branch is `main` or `master`:**
+
+#### 3.3.1 Check for Linear Issue
+
+First, ask if working on a Linear issue:
+
+```yaml
+header: "Branch source"
+question: "Are you working on a Linear issue?"
+options:
+  - label: "Yes, I have a Linear issue ID"
+    description: "Will use Linear's branch naming convention (e.g., initials/wan-521-description)"
+  - label: "No, generate from file changes"
+    description: "Will suggest branch names based on changed files"
+multiSelect: false
+```
+
+#### 3.3.2 If "Yes, I have a Linear issue ID":
+
+1. Ask for the issue ID (user enters via "Other" free-text option):
+   ```yaml
+   header: "Linear issue"
+   question: "Enter the Linear issue ID (e.g., WAN-521):"
+   options: []
+   ```
+
+2. Fetch issue details using Linear MCP:
+   ```
+   mcp__linear__get_issue with id: {issue-id}
+   ```
+
+3. **If fetch fails (MCP unavailable or issue not found):**
+   ```
+   Warning: Could not fetch Linear issue {issue-id}.
+
+   Error: {error message}
+
+   Falling back to file-based branch naming.
+   ```
+   Continue with file-based naming (Step 3.3.3).
+
+4. **If fetch succeeds and `branchName` is available:**
+   - Use the `branchName` directly from the Linear response as `{branchName}`
+
+5. **If fetch succeeds but `branchName` is empty/missing:**
+   - Ask for user initials:
+     ```yaml
+     header: "Initials"
+     question: "Enter your initials for the branch name (e.g., 'jd'):"
+     options: []
+     ```
+   - Generate branch name: `{initials}/{issue-id-lowercase}-{sanitized-title}`
+   - Sanitize title: lowercase, replace spaces/special chars with hyphens, max 50 chars
+   - Use the generated name as `{branchName}`
+
+6. **Check if branch exists (local or remote):**
+   ```bash
+   # Check if branch exists locally
+   git rev-parse --verify {branchName} 2>/dev/null
+
+   # Check if branch exists on remote
+   git ls-remote --heads origin {branchName}
+   ```
+
+   **If branch exists locally:**
+
+   Use AskUserQuestion:
+
+   ```yaml
+   header: "Branch Exists"
+   question: "Branch '{branchName}' already exists locally. What should I do?"
+   options:
+     - label: "Switch to existing branch"
+       description: "Continue work on the existing branch"
+     - label: "Delete and recreate"
+       description: "Start fresh from main/master"
+     - label: "Use different name"
+       description: "Create branch with '-v2' suffix"
+   ```
+
+   **If branch exists only on remote:**
+
+   ```bash
+   git checkout -b {branchName} origin/{branchName}
+   ```
+
+7. **If branch doesn't exist:**
+
+   ```bash
+   # Determine base branch
+   BASE=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's|refs/remotes/origin/||') || BASE="main"
+
+   # Fetch latest
+   git fetch origin $BASE
+
+   # Create branch from latest base
+   git checkout -b {branchName} origin/$BASE
+   ```
+
+#### 3.3.3 If "No, generate from file changes" (or fallback):
 
 1. Analyze changed files to suggest branch names:
    ```bash
