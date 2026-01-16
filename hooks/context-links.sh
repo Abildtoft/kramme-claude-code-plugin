@@ -39,10 +39,13 @@ if echo "$REMOTE_URL" | grep -q "github.com"; then
     fi
 elif echo "$REMOTE_URL" | grep -qE "(gitlab.com|consensusaps)"; then
     # GitLab - check for MR
-    MR_URL=$(glab mr view --web 2>/dev/null | grep -o 'https://[^ ]*')
-    if [ -n "$MR_URL" ]; then
-        MR_NUM=$(echo "$MR_URL" | grep -o '[0-9]*$')
-        PR_LINK="[MR !${MR_NUM}](${MR_URL})"
+    MR_JSON=$(glab mr view --output json 2>/dev/null)
+    if [ $? -eq 0 ] && [ -n "$MR_JSON" ]; then
+        MR_URL=$(echo "$MR_JSON" | grep -o '"web_url":"[^"]*"' | cut -d'"' -f4)
+        MR_NUM=$(echo "$MR_JSON" | grep -o '"iid":[0-9]*' | cut -d':' -f2)
+        if [ -n "$MR_URL" ]; then
+            PR_LINK="[MR !${MR_NUM}](${MR_URL})"
+        fi
     fi
 fi
 
