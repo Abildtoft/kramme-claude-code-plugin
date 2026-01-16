@@ -99,12 +99,12 @@ Install: `brew install trash`
 
 ## Testing
 
-The hooks are tested using [BATS](https://github.com/bats-core/bats-core) (Bash Automated Testing System).
+The hooks are tested using [BATS](https://github.com/bats-core/bats-core) (Bash Automated Testing System). The test suite also requires `jq` for JSON parsing in hooks.
 
 ### Setup
 
 ```bash
-# Install BATS
+# Install test dependencies
 make install-test-deps
 ```
 

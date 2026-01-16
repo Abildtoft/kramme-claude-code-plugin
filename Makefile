@@ -22,10 +22,11 @@ test-context:
 # Install test dependencies
 install-test-deps:
 	@echo "Installing BATS..."
-	brew install bats-core
+	brew install bats-core jq
 	@echo "Done! Run 'make test' to execute tests."
 
 # Check test prerequisites
 check-deps:
 	@command -v bats >/dev/null 2>&1 || { echo "BATS not found. Run 'make install-test-deps'"; exit 1; }
+	@command -v jq >/dev/null 2>&1 || { echo "jq not found. Run 'make install-test-deps'"; exit 1; }
 	@echo "All dependencies installed."

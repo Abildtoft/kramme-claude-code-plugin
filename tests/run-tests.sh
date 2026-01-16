@@ -14,6 +14,14 @@ if ! command -v bats &> /dev/null; then
     exit 1
 fi
 
+# Check for jq (required by block-rm-rf hook)
+if ! command -v jq &> /dev/null; then
+    echo "ERROR: jq is not installed."
+    echo "Install with: brew install jq"
+    echo "Or run: make install-test-deps"
+    exit 1
+fi
+
 # Make mock scripts executable
 chmod +x test_helper/mocks/*
 
