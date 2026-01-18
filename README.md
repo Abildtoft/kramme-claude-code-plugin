@@ -306,6 +306,12 @@ Available hook events:
 - [Hooks Reference](https://code.claude.com/docs/en/hooks)
 - [Skills Documentation](https://code.claude.com/docs/en/skills)
 
+## Releases
+
+See [CHANGELOG.md](CHANGELOG.md) for version history and [GitHub Releases](https://github.com/Abildtoft/kramme-cc-workflow/releases) for release notes.
+
+For maintainers: see [RELEASE.md](RELEASE.md) for the release process.
+
 ## License
 
 MIT
