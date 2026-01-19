@@ -158,6 +158,29 @@ For local development:
 claude /plugin install /path/to/kramme-cc-workflow
 ```
 
+### Customized Installation
+
+If you only need a subset of the plugin's components, use the setup wizard to create a customized version:
+
+```bash
+./scripts/setup-wizard.sh
+```
+
+The wizard offers preset bundles:
+- **PR Workflow** - Commands for PR creation, review, and iteration
+- **Linear Integration** - Commands for Linear issue management
+- **Safety** - Safety hooks and verification commands
+- **All** - Include all components
+- **Custom** - Pick individual components
+
+After running the wizard, a customized plugin is generated in `./dist/`. Install it with:
+
+```bash
+claude /plugin install ./dist
+```
+
+**Note:** For a better interactive experience, install [gum](https://github.com/charmbracelet/gum): `brew install gum`
+
 ## Updating
 
 For marketplace installs:
@@ -192,6 +215,9 @@ kramme-cc-workflow/
 ├── skills/              # Auto-triggered skills
 ├── hooks/               # Event handlers
 │   └── hooks.json
+├── scripts/
+│   ├── setup-wizard.sh  # Customized installation wizard
+│   └── lib/ui.sh        # UI utilities for the wizard
 └── README.md
 ```
 
