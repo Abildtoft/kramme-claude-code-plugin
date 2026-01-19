@@ -411,7 +411,7 @@ multiSelect: false
 **IMPORTANT:** Use the Skill tool to invoke `recreate-commits`:
 
 ```
-skill: "recreate-commits"
+skill: "kramme:recreate-commits"
 ```
 
 This skill will:
@@ -452,7 +452,7 @@ Recovery:
 **IMPORTANT:** Use the Skill tool to invoke `pr-description-generator`:
 
 ```
-skill: "pr-description-generator"
+skill: "kramme:pr-description-generator"
 ```
 
 This skill will:
@@ -576,6 +576,7 @@ The generated description is saved. You can create the PR manually.
 **For GitHub:**
 ```bash
 gh pr create --draft \
+  --assignee @me \
   --title "{title}" \
   --body "$(cat <<'EOF'
 {generated description}
@@ -585,16 +586,23 @@ EOF
 
 **For GitLab (using glab CLI):**
 ```bash
+# Determine the logged-in GitLab username
+GLAB_USER="$(glab api /user | python3 -c 'import sys, json; print(json.load(sys.stdin)["username"])')"
+
 glab mr create --draft \
+  --assignee "$GLAB_USER" \
   --title "{title}" \
   --description "$(cat <<'EOF'
 {generated description}
 EOF
 )"
+
+# Alternative (if jq is installed):
+# GLAB_USER="$(glab api /user | jq -r '.username')"
 ```
 
 **For GitLab (using MCP tools, if available):**
-Use `mcp__gitlab__create_merge_request` with `draft: true` or prefix title with `Draft: `.
+Use `mcp__gitlab__create_merge_request` with `draft: true` (or prefix title with `Draft: `) and include `assignee_id` set to the current user's ID.
 
 ### 8.5 Handle PR Creation Failure
 
