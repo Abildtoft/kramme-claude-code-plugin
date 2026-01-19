@@ -58,6 +58,12 @@ Check if input matches an existing Linear issue:
 2. Fetch issue details using `mcp__linear__get_issue` with `id` parameter
 3. Store the existing issue content (title, description, labels, etc.)
 4. Set mode flag to "improve"
+5. **Check for Dev Ask label**
+   - Inspect the fetched issue's labels
+   - If the issue has the "Dev Ask" label (case-insensitive match):
+     - Set `is_dev_ask` flag to true
+     - Store the original issue description as `original_dev_ask_content`
+     - This content will be preserved in the final issue regardless of refinements
 
 **If no issue detected → CREATE MODE:**
 1. Parse for file paths (anything that looks like a path: contains `/`, ends in common extensions)
@@ -96,6 +102,8 @@ The target issue was already fetched in Phase 1. Now present it to the user:
 1. **Present Current Issue**
    - Show the issue title, description, labels, and metadata
    - Format clearly for review
+   - If this is a Dev Ask issue (has "Dev Ask" label):
+     - Note to user: "This issue was created through Linear Asks. The original request will be preserved in an 'Original Dev Ask' section at the bottom of the refined issue."
 
 2. **Identify Improvement Areas**
    - Use `AskUserQuestion` to ask what aspects to improve:
@@ -365,7 +373,19 @@ Draft the issue following this template:
 ## Dependencies
 - [Blocking issue or prerequisite, if any]
 - [Related issues for context]
+
+<!-- Only include this section if the issue has the "Dev Ask" label -->
+## Original Dev Ask
+
+> [Preserve the complete original issue description here exactly as it was submitted]
+> [This section is automatically included for issues created via Linear Asks]
 ```
+
+**Dev Ask Handling:**
+- If `is_dev_ask` flag is true, always include the "Original Dev Ask" section at the bottom
+- Quote the entire original description using markdown blockquote (`>`)
+- Do not modify the original text - preserve it exactly
+- This section comes after all other sections, including Dependencies
 
 **Technical Notes Guidelines:**
 - Keep implementation proposals **high-level** (what, not how)
@@ -408,7 +428,7 @@ Draft the issue following this template:
 - Use `mcp__linear__update_issue` with:
   - `id`: The existing issue ID
   - `title`: Updated title (if changed)
-  - `description`: The updated markdown description
+  - `description`: The updated markdown description (include "Original Dev Ask" section at the bottom if `is_dev_ask` is true)
   - `labels`: Updated labels (if changed)
   - `priority`: Updated priority (if changed)
   - Other metadata as applicable
