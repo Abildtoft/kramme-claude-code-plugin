@@ -1,4 +1,4 @@
-.PHONY: test test-verbose test-block test-context install-test-deps check-deps
+.PHONY: test test-verbose test-block test-context test-format install-test-deps check-deps
 
 # Default target - run all tests
 test:
@@ -18,6 +18,11 @@ test-block:
 test-context:
 	@chmod +x tests/test_helper/mocks/*
 	@bats tests/context-links.bats
+
+# Run only auto-format tests
+test-format:
+	@chmod +x tests/test_helper/mocks/*
+	@bats tests/auto-format.bats
 
 # Install test dependencies
 install-test-deps:

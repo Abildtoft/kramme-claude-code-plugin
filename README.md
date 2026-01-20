@@ -60,6 +60,7 @@ Event handlers that run automatically at specific points in the Claude Code life
 |------|-------|-------------|
 | `block-rm-rf` | PreToolUse (Bash) | Blocks destructive file deletion commands and recommends using `trash` CLI instead. |
 | `context-links` | Stop | Displays active PR/MR and Linear issue links at the end of messages. Extracts Linear issue ID from branch name (pattern: `{prefix}/{TEAM-ID}-description`) and detects open PRs/MRs for the current branch. |
+| `auto-format` | PostToolUse (Write\|Edit) | Auto-formats code after file modifications. Detects project formatter from CLAUDE.md or auto-detects from project files (package.json, pyproject.toml, etc.). |
 
 ### block-rm-rf: Blocked Patterns
 
@@ -98,6 +99,55 @@ The `trash` command moves files to the system Trash instead of permanently delet
 Install: `brew install trash`
 
 > **Note:** This is a best-effort defense, not a comprehensive security barrier. There will always be edge cases that aren't covered.
+
+### auto-format: Supported Formatters
+
+| Language | Formatter | Detection |
+|----------|-----------|-----------|
+| JavaScript/TypeScript | Prettier | `"prettier"` in package.json |
+| JavaScript/TypeScript | Biome | `"@biomejs/biome"` in package.json |
+| CSS/SCSS/JSON/HTML/MD | Prettier | `"prettier"` in package.json |
+| Python | Black | `black` in pyproject.toml |
+| Python | Ruff | `ruff` in pyproject.toml |
+| Go | gofmt | go.mod exists |
+| Rust | rustfmt | Cargo.toml exists |
+| C# | dotnet format | *.csproj exists |
+| Shell | shfmt | globally available |
+| Nx workspace | nx format | nx.json exists |
+
+**Priority**: CLAUDE.md override > Biome > Prettier > global tools
+
+### auto-format: CLAUDE.md Override
+
+Add a format directive to your project's CLAUDE.md to specify a custom formatter:
+
+```markdown
+format: bun run format
+```
+
+Or use the `formatter:` key:
+
+```markdown
+formatter: npm run format
+```
+
+### auto-format: Caching
+
+Detection results are cached in `/tmp/claude-format-cache/` to avoid re-scanning project files on every write. The cache is automatically invalidated when any of these files change:
+
+- `CLAUDE.md`, `package.json`, `pyproject.toml`, `nx.json`, `go.mod`, `Cargo.toml`
+
+To clear the cache manually: `rm -rf /tmp/claude-format-cache/`
+
+### auto-format: Skipped Files
+
+The hook automatically skips:
+
+- **Binary files**: png, jpg, pdf, zip, exe, dll, woff, etc.
+- **Generated directories**: node_modules/, dist/, build/, .git/, vendor/, __pycache__/, coverage/
+- **Lock files**: *.lock, package-lock.json, pnpm-lock.yaml
+- **Source maps**: *.map
+- **Minified files**: *.min.js, *.min.css
 
 ## Contributing
 
@@ -143,6 +193,9 @@ make test-block
 
 # Run only context-links tests
 make test-context
+
+# Run only auto-format tests
+make test-format
 ```
 
 ### Test Structure
@@ -154,7 +207,8 @@ tests/
 │   ├── common.bash           # Shared utilities
 │   └── mocks/                # Mock git, gh, glab commands
 ├── block-rm-rf.bats          # Tests for block-rm-rf hook
-└── context-links.bats        # Tests for context-links hook
+├── context-links.bats        # Tests for context-links hook
+└── auto-format.bats          # Tests for auto-format hook
 ```
 
 ## Installation
