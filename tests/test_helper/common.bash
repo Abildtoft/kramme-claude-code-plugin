@@ -27,3 +27,26 @@ is_blocked() {
 is_allowed() {
     [ -z "$output" ] || [ "$output" = "{}" ]
 }
+
+# Helper: Create JSON input for auto-format hook
+make_format_input() {
+    local path="$1"
+    # Escape double quotes and backslashes for JSON
+    path=$(echo "$path" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
+    printf '{"tool_input":{"file_path":"%s"}}' "$path"
+}
+
+# Helper: Check if output contains systemMessage
+has_system_message() {
+    [[ "$output" == *'"systemMessage"'* ]]
+}
+
+# Helper: Check if output indicates formatting happened
+is_formatted() {
+    [[ "$output" == *'Formatted'* ]]
+}
+
+# Helper: Check if output indicates no formatter
+has_no_formatter() {
+    [[ "$output" == *'No formatter'* ]]
+}
