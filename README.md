@@ -335,7 +335,7 @@ For maintainers: see [RELEASE.md](RELEASE.md) for the release process.
 
 ## Attribution
 
-- `kramme:humanizer`: Based on Wikipedia: Signs of AI writing (maintained by WikiProject AI Cleanup) and inspired by [blader/humanizer](https://github.com/blader/humanizer).
+- `kramme:humanizer`: Based on Wikipedia: Signs of AI writing (maintained by WikiProject AI Cleanup) and heavily inspired by [blader/humanizer](https://github.com/blader/humanizer).
 
 ## License
 
