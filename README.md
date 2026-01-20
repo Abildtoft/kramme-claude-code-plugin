@@ -333,6 +333,10 @@ See [CHANGELOG.md](CHANGELOG.md) for version history and [GitHub Releases](https
 
 For maintainers: see [RELEASE.md](RELEASE.md) for the release process.
 
+## Attribution
+
+- `kramme:humanizer`: Based on Wikipedia: Signs of AI writing (maintained by WikiProject AI Cleanup) and inspired by [blader/humanizer](https://github.com/blader/humanizer).
+
 ## License
 
 MIT
