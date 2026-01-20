@@ -12,6 +12,7 @@ A Claude Code plugin providing tooling for daily workflow tasks. These are the p
 | `/kramme:define-linear-issue` | Create or improve a Linear issue through exhaustive guided refinement. Can start from scratch or refine an existing issue by ID. Supports file references for context. |
 | `/kramme:implement-linear-issue` | Start implementing a Linear issue with branch setup, context gathering, and guided workflow. Fetches issue details, explores codebase for patterns, asks clarifying questions, and creates the recommended branch. |
 | `/kramme:deslop` | Remove AI-generated code slop from a branch. Uses `kramme:deslop-reviewer` agent to identify slop, then fixes the issues. |
+| `/kramme:humanize` | Humanize provided text or file content using the `kramme:humanizer` skill. |
 | `/kramme:verify` | Run verification checks (tests, formatting, builds, linting, type checking) for affected code. Automatically detects project type and runs appropriate commands. |
 | `/kramme:iterate-pr` | Iterate on a PR until CI passes. Automates the feedback-fix-push-wait cycle for both GitHub and GitLab. |
 | `/kramme:recreate-commits` | Recreate current branch in-place with narrative-quality commits and logical, reviewer-friendly commit history. |
@@ -44,6 +45,7 @@ Skills are auto-triggered based on context. Claude will invoke these automatical
 | `kramme:connect-existing-feature-documentation-writer` | Creating or updating documentation for Connect features |
 | `kramme:connect-migrate-legacy-store-to-ngrx-component-store` | Migrating legacy CustomStore/FeatureStore to NgRx ComponentStore in Connect monorepo |
 | `kramme:connect-modernize-legacy-angular-component` | Modernizing legacy Angular components in Connect monorepo |
+| `kramme:humanizer` | Remove signs of AI-generated writing from text to make it sound more natural and human-written |
 | `kramme:markdown-converter` | Converting documents (PDF, Word, Excel, images, audio, etc.) to Markdown using markitdown |
 | `kramme:pr-description-generator` | Generating PR descriptions by analyzing git changes, commit history, and Linear issues |
 | `kramme:recreate-commits` | Recreating the current branch in-place with narrative-quality commits |
