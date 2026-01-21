@@ -266,7 +266,22 @@ Safe permissions for status checks and analysis only:
       "Bash(glab mr list:*)",
       "Bash(glab ci status:*)",
       "Bash(glab ci list:*)",
-      "Bash(glab ci view:*)"
+      "Bash(glab ci view:*)",
+      "mcp__linear__get_issue",
+      "mcp__linear__list_issues",
+      "mcp__linear__list_comments",
+      "mcp__linear__list_teams",
+      "mcp__linear__get_team",
+      "mcp__linear__list_projects",
+      "mcp__linear__get_project",
+      "mcp__linear__list_issue_labels",
+      "mcp__linear__list_issue_statuses",
+      "mcp__linear__list_cycles",
+      "mcp__linear__list_users",
+      "mcp__linear__get_user",
+      "mcp__linear__get_document",
+      "mcp__linear__list_documents",
+      "mcp__linear__search_documentation"
     ]
   }
 }
@@ -346,7 +361,22 @@ Enables all plugin workflows including PR creation, commit management, and verif
       "Bash(eslint:*)",
       "Bash(tsc:*)",
       "Bash(cat package.json:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "mcp__linear__get_issue",
+      "mcp__linear__list_issues",
+      "mcp__linear__list_comments",
+      "mcp__linear__list_teams",
+      "mcp__linear__get_team",
+      "mcp__linear__list_projects",
+      "mcp__linear__get_project",
+      "mcp__linear__list_issue_labels",
+      "mcp__linear__list_issue_statuses",
+      "mcp__linear__list_cycles",
+      "mcp__linear__list_users",
+      "mcp__linear__get_user",
+      "mcp__linear__get_document",
+      "mcp__linear__list_documents",
+      "mcp__linear__search_documentation"
     ]
   }
 }
