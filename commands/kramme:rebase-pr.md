@@ -105,7 +105,7 @@ Before pushing, use `AskUserQuestion` to confirm:
 >
 > Options:
 > - **Yes, force push** - Push with `--force-with-lease`
-> - **Abort** - Keep local rebase but don't push
+> - **Do not push** - Keep local rebase but don't push
 
 If confirmed, push the rebased branch:
 
