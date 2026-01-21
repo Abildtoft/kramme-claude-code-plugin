@@ -99,7 +99,15 @@ git rebase --autostash origin/<base-branch>
 
 ### Step 4: Force Push
 
-Push the rebased branch:
+Before pushing, use `AskUserQuestion` to confirm:
+
+> "Ready to force push rebased branch. This will overwrite the remote branch history. Continue?"
+>
+> Options:
+> - **Yes, force push** - Push with `--force-with-lease`
+> - **Abort** - Keep local rebase but don't push
+
+If confirmed, push the rebased branch:
 
 ```bash
 git push --force-with-lease origin $(git branch --show-current)
