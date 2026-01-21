@@ -2,6 +2,24 @@
 
 A Claude Code plugin providing tooling for daily workflow tasks. These are the personal workflow commands I've been using in my day-to-day development, now consolidated into a plugin.
 
+## Table of Contents
+
+- [Commands](#commands)
+- [Agents](#agents)
+- [Skills](#skills)
+- [Hooks](#hooks)
+- [Installation & Updating](#installation--updating)
+- [Suggested Permissions](#suggested-permissions)
+- [Recommended MCP Servers](#recommended-mcp-servers)
+- [Contributing](#contributing)
+- [Testing](#testing)
+- [Plugin Structure](#plugin-structure)
+- [Adding Components](#adding-components)
+- [Documentation](#documentation)
+- [Releases](#releases)
+- [Attribution](#attribution)
+- [License](#license)
+
 ## Commands
 
 | Command | Description |
@@ -226,7 +244,9 @@ tests/
 └── auto-format.bats          # Tests for auto-format hook
 ```
 
-## Installation
+## Installation & Updating
+
+### Installation
 
 Marketplace install (recommended):
 
@@ -246,6 +266,28 @@ For local development:
 ```bash
 claude /plugin install /path/to/kramme-cc-workflow
 ```
+
+### Updating
+
+For marketplace installs:
+
+```bash
+claude /plugin marketplace update kramme-cc-workflow
+```
+
+For Git or local installs, re-run the install command to pull the latest version:
+
+```bash
+# Git install
+claude /plugin install git+https://github.com/Abildtoft/kramme-cc-workflow
+
+# Local development
+claude /plugin install /path/to/kramme-cc-workflow
+```
+
+Restart Claude Code after updating for changes to take effect.
+
+**Auto-update:** Since Claude Code v2.0.70, auto-update can be enabled per-marketplace.
 
 ## Suggested Permissions
 
@@ -534,28 +576,6 @@ claude mcp add playwright -s user -- npx -y @playwright/mcp@latest
 ```
 
 Browser binaries are installed automatically on first use.
-
-## Updating
-
-For marketplace installs:
-
-```bash
-claude /plugin marketplace update kramme-cc-workflow
-```
-
-For Git or local installs, re-run the install command to pull the latest version:
-
-```bash
-# Git install
-claude /plugin install git+https://github.com/Abildtoft/kramme-cc-workflow
-
-# Local development
-claude /plugin install /path/to/kramme-cc-workflow
-```
-
-Restart Claude Code after updating for changes to take effect.
-
-**Auto-update:** Since Claude Code v2.0.70, auto-update can be enabled per-marketplace.
 
 ## Plugin Structure
 
