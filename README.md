@@ -11,6 +11,7 @@ A Claude Code plugin providing tooling for daily workflow tasks. These are the p
 - [Installation & Updating](#installation--updating)
 - [Suggested Permissions](#suggested-permissions)
 - [Recommended MCP Servers](#recommended-mcp-servers)
+- [Recommended CLIs](#recommended-clis)
 - [Contributing](#contributing)
 - [Testing](#testing)
 - [Plugin Structure](#plugin-structure)
@@ -550,6 +551,36 @@ claude mcp add playwright -s user -- npx -y @playwright/mcp@latest
 ```
 
 Browser binaries are installed automatically on first use.
+
+## Recommended CLIs
+
+CLI tools that enhance the plugin experience. Some are required for specific commands.
+
+### Required
+
+| CLI | Purpose | Install |
+|-----|---------|---------|
+| `git` | Version control (all commands) | Pre-installed on most systems |
+| `gh` | GitHub PR workflows | `brew install gh` |
+| `glab` | GitLab MR workflows | `brew install glab` |
+
+### Verification & Build
+
+| CLI | Purpose | Install |
+|-----|---------|---------|
+| `nx` | Nx monorepo commands | `npm install -g nx` |
+| `dotnet` | .NET project verification | [dotnet.microsoft.com](https://dotnet.microsoft.com/download) |
+| `prettier` | JS/TS formatting | `npm install -g prettier` |
+| `eslint` | JS/TS linting | `npm install -g eslint` |
+| `tsc` | TypeScript type-checking | `npm install -g typescript` |
+
+### Utilities
+
+| CLI | Purpose | Install |
+|-----|---------|---------|
+| `trash` | Safe file deletion (used by block-rm-rf hook) | `brew install trash` |
+| `jq` | JSON parsing (internal use) | `brew install jq` |
+| `markitdown` | Document conversion skill | `uvx markitdown` or `pip install markitdown` |
 
 ## Plugin Structure
 
