@@ -11,7 +11,12 @@ This command uses the `kramme:deslop-reviewer` agent to identify AI slop, then f
 
 1. **Scan for slop**
    - Launch `kramme:deslop-reviewer` in code review mode
-   - Get the diff against main: `git diff main...HEAD`
+   - Detect the base branch and get the diff:
+     ```bash
+     BASE_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
+     [ -z "$BASE_BRANCH" ] && BASE_BRANCH=$(git branch -r | grep -E 'origin/(main|master)$' | head -1 | sed 's@.*origin/@@')
+     git diff origin/$BASE_BRANCH...HEAD
+     ```
    - Agent identifies slop patterns in changed files
 
 2. **Review findings**

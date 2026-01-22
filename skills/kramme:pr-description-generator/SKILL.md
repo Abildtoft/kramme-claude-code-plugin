@@ -72,13 +72,20 @@ Strictness hierarchy: ALWAYS/NEVER > PREFER > CAN > NOTE/EXAMPLE
    git branch --show-current
    ```
 
-4. **ALWAYS** identify the base/target branch:
-   - **PREFER** `master` for Connect project (check git status from context)
-   - **CAN** ask user if unclear
+4. **ALWAYS** detect and identify the base/target branch dynamically:
+   ```bash
+   BASE_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
+   [ -z "$BASE_BRANCH" ] && BASE_BRANCH=$(git branch -r | grep -E 'origin/(main|master)$' | head -1 | sed 's@.*origin/@@')
+   echo "Base branch: $BASE_BRANCH"
+   ```
+   - **NOTE**: This detects `main`, `master`, or any custom default branch
+   - **CAN** ask user if unclear or override needed
 
 ### Phase 2: Context Gathering
 
-**ALWAYS** gather comprehensive context from all available sources:
+**ALWAYS** gather comprehensive context from all available sources.
+
+**IMPORTANT**: Use `origin/$BASE_BRANCH` for all comparisons to ensure you compare against the remote's state, not a potentially stale local branch.
 
 **IMPORTANT**: Spec files and conversation history are for YOUR analysis only to understand implementation decisions. The final PR description should ONLY reference Linear issues as the source of original requirements, since reviewers have access to Linear but not to spec files or conversation history.
 
@@ -87,15 +94,16 @@ Strictness hierarchy: ALWAYS/NEVER > PREFER > CAN > NOTE/EXAMPLE
 1. **ALWAYS** get the diff between current branch and base branch:
 
    ```bash
-   git diff master...HEAD
+   git diff origin/$BASE_BRANCH...HEAD
    ```
 
    - **NOTE**: Use three dots (`...`) to compare from merge base
+   - **NOTE**: Use `origin/` prefix to compare against remote state
 
 2. **ALWAYS** get the list of changed files with stats:
 
    ```bash
-   git diff master...HEAD --stat
+   git diff origin/$BASE_BRANCH...HEAD --stat
    ```
 
 3. **ALWAYS** categorize changed files by area:
@@ -116,13 +124,13 @@ Strictness hierarchy: ALWAYS/NEVER > PREFER > CAN > NOTE/EXAMPLE
 1. **ALWAYS** get commit history for the current branch:
 
    ```bash
-   git log master..HEAD --oneline
+   git log origin/$BASE_BRANCH..HEAD --oneline
    ```
 
 2. **ALWAYS** get detailed commit messages:
 
    ```bash
-   git log master..HEAD --format="%h %s%n%b%n"
+   git log origin/$BASE_BRANCH..HEAD --format="%h %s%n%b%n"
    ```
 
 3. **ALWAYS** analyze commits to understand:
@@ -661,7 +669,9 @@ Here is your generated PR description:
 
 ### Context Gathering
 
-- **ALWAYS** use `git diff master...HEAD` (three dots) to compare from merge base, not `master..HEAD` (two dots)
+- **ALWAYS** detect the base branch dynamically using `git symbolic-ref refs/remotes/origin/HEAD`
+- **ALWAYS** use `git diff origin/$BASE_BRANCH...HEAD` (three dots, `origin/` prefix) to compare from merge base against the remote's state
+- **NEVER** use local branch names like `main` or `master` directly - always use `origin/` prefix to avoid comparing against stale local branches
 - **ALWAYS** look at both commit messages and code changes - they tell different stories
 - **NEVER** skip Linear issue lookup if the branch name contains an issue ID
 - **PREFER** using MCP tools (GitLab/Linear) over bash commands when available for richer data

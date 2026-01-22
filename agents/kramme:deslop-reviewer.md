@@ -133,7 +133,12 @@ const items = (data as unknown as ItemList).items;
 
 ### For Mode 1 (Code Review):
 
-1. Get the PR diff: `git diff main...HEAD` or `git diff $(git merge-base main HEAD)...HEAD`
+1. Detect the base branch and get the PR diff:
+   ```bash
+   BASE_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
+   [ -z "$BASE_BRANCH" ] && BASE_BRANCH=$(git branch -r | grep -E 'origin/(main|master)$' | head -1 | sed 's@.*origin/@@')
+   git diff origin/$BASE_BRANCH...HEAD
+   ```
 2. For each changed file:
    - Read the full file to understand its existing style and patterns
    - Compare new code against the file's established conventions
