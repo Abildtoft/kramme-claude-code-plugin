@@ -35,12 +35,13 @@ Create or improve a Linear issue through exhaustive interactive refinement. Can 
 ## Process Overview
 
 1. **Input Parsing & Mode Detection**: Detect if improving existing issue or creating new
-2. **Linear Context Discovery**: Fetch available teams, labels, and projects
-3. **Existing Issue Handling**: For improve mode, fetch issue; for create mode, check duplicates
-4. **Codebase Exploration**: Search for related implementations and patterns
-5. **Exhaustive Interview**: Multi-round questioning (adapted for improve vs create mode)
-6. **Issue Composition**: Draft issue following the template
-7. **Review & Create/Update**: User approval, then create or update in Linear
+2. **File References & Issue Type**: Read provided files (if any) and classify the issue type
+3. **Linear Context Discovery**: Fetch available teams, labels, and projects
+4. **Existing Issue Handling**: For improve mode, fetch issue; for create mode, check duplicates
+5. **Codebase Exploration**: Search for related implementations and patterns
+6. **Interview**: Multi-round questioning (adapted for issue type and mode)
+7. **Issue Composition**: Draft issue following the template
+8. **Review & Create/Update**: User approval, then create or update in Linear
 
 ## Phase 1: Input Parsing & Mode Detection
 
@@ -66,7 +67,7 @@ Check if input matches an existing Linear issue:
      - This content will be preserved in the final issue regardless of refinements
 
 **If no issue detected → CREATE MODE:**
-1. Parse for file paths (anything that looks like a path: contains `/`, ends in common extensions)
+1. Parse for file paths (anything that looks like a path: contains `/`, ends in common extensions) and store them for Step 2
 2. Remaining text is the description/idea
 3. If empty, use `AskUserQuestion` to gather the initial concept
 4. Set mode flag to "create"
@@ -80,6 +81,32 @@ Check if input matches an existing Linear issue:
    - What patterns or conventions does it follow?
    - What dependencies or integrations exist?
 3. Store findings for use in interview and issue composition
+
+### Step 3: Issue Type Classification
+
+After determining the mode (and any file context, if provided), classify the issue type. Auto-detect from context and suggest to the user (they can override):
+
+**Issue Types:**
+- **Bug (Simple)**: Root cause is known or easily identified, fix is localized, no architectural decisions needed
+- **Bug (Complex)**: Unknown root cause, affects multiple components, requires investigation
+- **Feature**: New functionality
+- **Improvement**: Enhance existing functionality
+
+**Detection Heuristics:**
+- Keywords like "bug", "fix", "broken", "doesn't work", "error", "issue" → suggest Bug
+- If user provides root cause and specific file(s) → suggest Bug (Simple)
+- If scope is unclear, multiple components mentioned, or investigation needed → suggest Bug (Complex)
+- Keywords like "add", "new", "implement", "create" → suggest Feature
+- Keywords like "improve", "refactor", "enhance", "optimize" → suggest Improvement
+
+**Present classification to user via `AskUserQuestion`:**
+- Show detected type with reasoning
+- Allow override to any type
+- Store `issue_type` for conditional behavior in later phases
+
+**For Bug (Simple), store these flags:**
+- `is_simple_bug = true`
+- This enables the streamlined interview and simple template
 
 ## Phase 2: Linear Context Discovery
 
@@ -152,7 +179,9 @@ Before creating a new issue, check for existing Linear issues that may already c
 
 ## Phase 4: Codebase Exploration
 
-Proactively search the repository to inform the issue definition:
+**For Simple Bugs (`is_simple_bug = true`):** Skip this phase if the user has already provided the root cause and affected file(s). Only explore if root cause is uncertain.
+
+**For all other issue types:** Proactively search the repository to inform the issue definition:
 
 1. **Find Related Implementations**
    - Use `Grep` to search for keywords from the description
@@ -179,7 +208,40 @@ Proactively search the repository to inform the issue definition:
 
 **Output**: Summarize findings to share with user and inform interview questions.
 
-## Phase 5: Exhaustive Interview
+## Phase 5: Interview
+
+The interview process adapts based on the issue type detected in Step 3.
+
+### Simple Bug Interview (if `is_simple_bug = true`)
+
+For simple bugs, use a streamlined 2-round interview instead of the full 5-round process. The goal is to quickly capture the essential information without unnecessary overhead.
+
+**Round 1: Problem & Reproduction**
+
+Questions to cover:
+- What's the bug? (brief description)
+- Steps to reproduce (numbered list ending with "Bug: [what happens]")
+- What should happen instead?
+
+**Round 2: Root Cause & Fix**
+
+Questions to cover:
+- What's causing the bug? (if known - 1-2 sentences)
+- What needs to change to fix it? (1-2 sentences)
+- Which file(s) are affected?
+
+**If root cause is unknown or unclear after Round 2:**
+- Reclassify as **Bug (Complex)** and set `is_simple_bug = false`
+- Switch to the **Standard Interview** starting at Round 1
+- Use the **Comprehensive Template** in Phase 6
+
+After these 2 rounds, skip to **Round 5: Metadata & Classification** (streamlined - just team and labels, skip project/priority unless user wants them).
+
+Then proceed directly to Phase 6 with the simple bug template.
+
+---
+
+### Standard Interview (for all other issue types)
 
 Conduct a thorough, multi-round interview using `AskUserQuestion`. Provide context before each question explaining why it matters and your recommendation if you have one.
 
@@ -285,6 +347,58 @@ Coverage: [Problem: X%] [Scope: X%] [Technical: X%] [Acceptance: X%] [Metadata: 
 Continue until all dimensions show adequate coverage for a well-defined issue.
 
 ## Phase 6: Issue Composition
+
+### Template Selection
+
+Choose the template based on `issue_type`:
+- **Bug (Simple)**: Use the Simple Bug Template below
+- **All others**: Use the Comprehensive Template
+
+---
+
+### Simple Bug Template (for `is_simple_bug = true`)
+
+For simple bugs, use this concise format:
+
+#### Title Format
+
+`Fix [what's broken] when [trigger condition]`
+
+**Examples:**
+- "Fix dialog reopening after cancel when navigating between roles"
+- "Fix null pointer in user search when query is empty"
+
+#### Description Template
+
+```markdown
+## Problem
+
+[1-2 sentence description of the bug]
+
+**Steps to reproduce:**
+1. [Step 1]
+2. [Step 2]
+3. **Bug:** [What happens]
+
+## Root Cause
+
+[1-2 sentences explaining what's causing the bug]
+
+## Fix
+
+[1-2 sentences describing what needs to change]
+
+**File:** `path/to/affected/file.ts`
+```
+
+**Notes:**
+- If multiple files are affected, list each on its own line with `**File:**` prefix
+- If root cause is unknown, reclassify to Bug (Complex), set `is_simple_bug = false`, and switch to the comprehensive interview/template
+- Keep each section brief - this template is intentionally minimal
+
+---
+
+### Comprehensive Template (for features, improvements, complex bugs)
 
 ### Mode-Specific Behavior
 
@@ -454,24 +568,46 @@ Draft the issue following this template:
 
 ## Important Guidelines
 
+### Template Selection
+
+1. **Use Simple Bug Template when:**
+   - The root cause is known or easily identified
+   - The fix is localized to 1-3 files
+   - No architectural decisions are needed
+   - The bug can be fully described in a few sentences
+
+2. **Use Comprehensive Template when:**
+   - Root cause is unknown and needs investigation
+   - Multiple components are affected
+   - The issue is a feature, improvement, or complex bug
+   - Scope boundaries need definition
+   - Stakeholder alignment is important
+
+### General Guidelines
+
 1. **Lead with "Why"** - Problem and value proposition are the most important parts. Don't settle for vague justifications.
 2. **Write for Product Team first** - The issue should be compelling to non-technical stakeholders. They read Problem, Value, Goal, Scope, and Acceptance Criteria.
 3. **Technical details are secondary** - Keep implementation proposals high-level. Engineers determine the detailed how.
 4. **Code examples only when necessary** - Only for specific bugs or concrete fixes. New features don't need code examples.
 5. **Check for duplicates first** - Always search existing issues before creating new ones.
-6. **Exhaust the interview** - Don't rush through questions. Especially Round 1 (Problem & Value).
+6. **Exhaust the interview** - Don't rush through questions. Especially Round 1 (Problem & Value) for comprehensive issues.
 7. **Use exploration findings strategically** - Reference patterns and affected areas, but don't dump implementation details.
 8. **Craft real options** - Every AskUserQuestion option should be a legitimate choice.
 9. **Connect the dots** - Show how different decisions interact and affect each other.
 10. **Challenge diplomatically** - If scope seems too broad, suggest splitting.
 11. **Get user approval** - Always show the draft before creating the issue.
+12. **Keep simple bugs simple** - Don't over-engineer the issue definition. If root cause and fix are clear, the simple template is sufficient.
 
 ## Starting the Process
 
 1. Parse `$ARGUMENTS` and detect mode (issue ID → improve, otherwise → create)
 2. If improve mode: fetch the existing issue details
 3. If create mode with no input: ask what issue they want to define
-4. Begin Phase 2 (Linear Context Discovery)
-5. Phase 3: For improve mode, present issue and select areas to improve; for create mode, check for duplicates
-6. Proceed through remaining phases (adapted for mode)
-7. End with the created or updated issue URL
+4. Process file references (if any)
+5. Classify issue type (auto-detect and confirm with user)
+6. Begin Phase 2 (Linear Context Discovery)
+7. Phase 3: For improve mode, present issue and select areas to improve; for create mode, check for duplicates
+8. Phase 4: Codebase exploration (skip for simple bugs if root cause known)
+9. Phase 5: Interview (simple 2-round for simple bugs, full 5-round for others)
+10. Phase 6: Compose issue using appropriate template
+11. Phase 7: Review, refine, and create/update issue
