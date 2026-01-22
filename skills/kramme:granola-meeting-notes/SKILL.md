@@ -1,35 +1,45 @@
 ---
 name: kramme:granola-meeting-notes
-description: Extract and query meeting notes from Granola (macOS). Use when users ask about their meetings, meeting notes, attendees, or want to find information from past meetings. Triggers on phrases like "what meetings", "meeting notes", "who was in my meeting", "meeting with [person]", "meeting patterns", "who do I meet with most".
+description: Extract and query meeting notes from Granola (macOS/Windows). Use when users ask about their meetings, meeting notes, attendees, or want to find information from past meetings. Triggers on phrases like "what meetings", "meeting notes", "who was in my meeting", "meeting with [person]", "meeting patterns", "who do I meet with most".
 ---
 
 # Granola Meeting Notes
 
-Extract and query meeting data from Granola's local cache on macOS.
+Extract and query meeting data from Granola's local cache on macOS and Windows.
 
 ## Prerequisites
 
-- Granola must be installed on macOS
+- Granola must be installed (macOS or Windows)
 - User must have at least one recorded meeting
 
 ## Cache Location
 
-```
-~/Library/Application Support/Granola/cache-v3.json
-```
+| Platform | Path |
+|----------|------|
+| macOS | `~/Library/Application Support/Granola/cache-v3.json` |
+| Windows | `%LOCALAPPDATA%\Granola\cache-v3.json` |
 
 ## Reading the Cache
 
 ```python
 import json
 import os
+import platform
 from datetime import datetime, timedelta, timezone
 from collections import Counter
 
-cache_path = os.path.expanduser("~/Library/Application Support/Granola/cache-v3.json")
+def get_cache_path():
+    """Get Granola cache path for current platform."""
+    if platform.system() == 'Windows':
+        local_appdata = os.environ.get('LOCALAPPDATA', '')
+        return os.path.join(local_appdata, 'Granola', 'cache-v3.json')
+    else:  # macOS (and Linux if ever supported)
+        return os.path.expanduser('~/Library/Application Support/Granola/cache-v3.json')
+
+cache_path = get_cache_path()
 
 if not os.path.exists(cache_path):
-    raise FileNotFoundError("Granola cache not found. Is Granola installed with recorded meetings?")
+    raise FileNotFoundError(f"Granola cache not found at {cache_path}. Is Granola installed with recorded meetings?")
 
 with open(cache_path, 'r') as f:
     raw = json.load(f)
