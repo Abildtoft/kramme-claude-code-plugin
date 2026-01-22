@@ -12,6 +12,8 @@ Extract and query meeting data from Granola's local cache on macOS and Windows.
 - Granola must be installed (macOS or Windows)
 - User must have at least one recorded meeting
 
+**Note:** Windows support is untested. The cache path is assumed to be `%LOCALAPPDATA%\Granola\cache-v3.json`.
+
 ## Cache Location
 
 | Platform | Path |
