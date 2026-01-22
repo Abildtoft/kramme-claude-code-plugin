@@ -29,7 +29,7 @@ Delete the following files if they exist:
 ## Workflow
 
 1. Check which target files exist in the working directory
-2. Delete each file that exists using `rm`
+2. Delete each file that exists using `trash` (files can be restored from system Trash if needed)
 3. Report results:
    - List files that were deleted
    - Note if no artifact files were found
