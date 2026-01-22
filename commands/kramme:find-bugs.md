@@ -9,7 +9,12 @@ Review changes on this branch for bugs, security vulnerabilities, and code quali
 
 ## Phase 1: Complete Input Gathering
 
-1. Get the FULL diff: `git diff master...HEAD`
+1. Detect the base branch and get the FULL diff:
+   ```bash
+   BASE_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
+   [ -z "$BASE_BRANCH" ] && BASE_BRANCH=$(git branch -r | grep -E 'origin/(main|master)$' | head -1 | sed 's@.*origin/@@')
+   git diff origin/$BASE_BRANCH...HEAD
+   ```
 2. If output is truncated, read each changed file individually until you have seen every changed line
 3. List all files modified in this branch before proceeding
 

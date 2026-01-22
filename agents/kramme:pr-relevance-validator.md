@@ -28,14 +28,21 @@ You will receive:
 Run these commands to understand what changed:
 
 ```bash
-# Get the merge base
-git merge-base main HEAD
+# Detect the base branch (uses remote to ensure we compare against latest)
+BASE_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
+# Fallback if not set
+if [ -z "$BASE_BRANCH" ]; then
+  BASE_BRANCH=$(git branch -r | grep -E 'origin/(main|master)$' | head -1 | sed 's@.*origin/@@')
+fi
+
+# Get the merge base (using origin/ to compare against remote state)
+git merge-base origin/$BASE_BRANCH HEAD
 
 # Get list of modified files
-git diff --name-only $(git merge-base main HEAD)...HEAD
+git diff --name-only $(git merge-base origin/$BASE_BRANCH HEAD)...HEAD
 
 # Get detailed diff with line numbers
-git diff --unified=3 $(git merge-base main HEAD)...HEAD
+git diff --unified=3 $(git merge-base origin/$BASE_BRANCH HEAD)...HEAD
 ```
 
 Parse the diff to extract:
@@ -57,7 +64,7 @@ For each finding with a `file:line` reference:
    - For lines that were added: definitely PR-caused
    - For lines that were modified: likely PR-caused
    - For unchanged lines in modified files: check if the issue existed before
-   - Use `git show $(git merge-base main HEAD):path/to/file` to see the file before the PR
+   - Use `git show $(git merge-base origin/$BASE_BRANCH HEAD):path/to/file` to see the file before the PR
 
 ### Step 3: Classify Findings
 
