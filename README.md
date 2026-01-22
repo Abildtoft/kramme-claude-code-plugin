@@ -41,6 +41,7 @@ A Claude Code plugin providing tooling for daily workflow tasks. These are the p
 | `/kramme:explore-interview` | Conduct an in-depth interview about a topic/proposal to uncover requirements. Uses structured questioning to explore features, processes, or architecture decisions. |
 | `/kramme:review-pr` | Run comprehensive PR review using specialized agents. Supports reviewing comments, tests, errors, types, and code quality. Can run agents sequentially or in parallel. |
 | `/kramme:granola-meeting-notes` | Query meeting notes from Granola (macOS, Windows; Windows is untested). Supports fuzzy search, pattern analysis, transcript stats, and markdown export. |
+| `/kramme:learn` | Extract reusable knowledge from the current session. Identifies patterns, commands, debugging insights, and project-specific knowledge for future reference. |
 
 ## Agents
 
@@ -74,6 +75,7 @@ Skills are auto-triggered based on context. Claude will invoke these automatical
 | `kramme:recreate-commits` | Recreating the current branch in-place with narrative-quality commits |
 | `kramme:structured-implementation-workflow` | Detecting LOG.md and OPEN_ISSUES.md files to track complex implementations |
 | `kramme:verification-before-completion` | About to claim work is complete/fixed/passing - requires evidence before assertions |
+| `kramme:session-summary` | Summarizing session progress before stopping or compacting, preparing session state for persistence |
 
 ## Hooks
 
@@ -83,8 +85,13 @@ Event handlers that run automatically at specific points in the Claude Code life
 |------|-------|-------------|
 | `block-rm-rf` | PreToolUse (Bash) | Blocks destructive file deletion commands and recommends using `trash` CLI instead. |
 | `noninteractive-git` | PreToolUse (Bash) | Blocks git commands that would open an interactive editor, guiding the agent to use non-interactive alternatives. |
+| `suggest-compact` | PreToolUse (*) | Suggests `/compact` every 50 tool calls to manage context window. Strategic compacting preserves context through logical phases. |
 | `context-links` | Stop | Displays active PR/MR and Linear issue links at the end of messages. Extracts Linear issue ID from branch name (pattern: `{prefix}/{TEAM-ID}-description`) and detects open PRs/MRs for the current branch. |
 | `auto-format` | PostToolUse (Write\|Edit) | Auto-formats code after file modifications. Detects project formatter from CLAUDE.md or auto-detects from project files (package.json, pyproject.toml, etc.). |
+| `log-changes` | PostToolUse (Write\|Edit\|Bash) | Logs file modifications to `.claude-session/changes.log` for session awareness and learning extraction. |
+| `session-restore` | SessionStart | Loads saved session state from `.claude-session/session.md` on startup, providing context from previous sessions. |
+| `session-save` | Stop | Saves session state including branch, modified files, and progress summary to `.claude-session/`. |
+| `extract-learnings` | Stop | Prompts for `/kramme:learn` if session had substantial changes (>10 logged changes). |
 
 ### block-rm-rf: Blocked Patterns
 
@@ -185,6 +192,46 @@ The hook automatically skips:
 - **Lock files**: *.lock, package-lock.json, pnpm-lock.yaml
 - **Source maps**: *.map
 - **Minified files**: *.min.js, *.min.css
+
+### Session Persistence
+
+The plugin supports session state persistence via a `.claude-session/` directory in your project.
+
+**Session Files:**
+
+| File | Purpose |
+|------|---------|
+| `session.md` | Session state and progress summary |
+| `changes.log` | Log of file modifications |
+| `tool-counter` | Tool call counter for compact suggestions |
+
+**Workflow:**
+
+1. **SessionStart** - Previous session state is loaded and shown as context
+2. **During Session** - Changes are logged, tool calls are counted
+3. **Stop** - Session state is saved, learnings extraction is prompted
+
+**Summarizing Progress:**
+
+Before stopping or compacting, use the `kramme:session-summary` skill (or ask to "summarize progress") to update the session file with:
+- What was worked on
+- Key changes made
+- Next steps
+- Open questions
+
+**Extracting Learnings:**
+
+Run `/kramme:learn` at session end to extract reusable knowledge:
+- Patterns discovered
+- Debugging techniques
+- Project-specific conventions
+
+**Configuration:**
+
+Add to your `.gitignore`:
+```
+.claude-session/
+```
 
 ## Contributing
 

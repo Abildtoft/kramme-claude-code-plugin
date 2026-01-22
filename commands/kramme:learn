@@ -1,0 +1,68 @@
+---
+name: kramme:learn
+description: Extract reusable knowledge from the current session
+argument-hint: [topic]
+---
+
+# Learn
+
+Extract knowledge from the current session that could be useful for future work.
+
+## Instructions
+
+### Phase 1: Gather Context
+
+1. Read `.claude-session/changes.log` if it exists
+2. Review recent git commits on current branch: `git log --oneline -20`
+3. If a topic is provided, focus extraction on that area
+
+### Phase 2: Identify Learnings
+
+Look for:
+
+- **Patterns discovered** - code patterns, architectural decisions, conventions
+- **Tools and commands** - useful CLI commands, scripts, flags
+- **Project-specific knowledge** - conventions, gotchas, configuration
+- **Debugging insights** - common errors and their solutions
+- **Workarounds** - non-obvious solutions to problems encountered
+
+### Phase 3: Format Learnings
+
+For each learning, create a structured entry:
+
+```markdown
+### [Topic]
+
+**Context:** When does this apply?
+**Learning:** What was discovered?
+**Example:** Concrete example or code snippet
+**Source:** Where this came from (file, commit, etc.)
+```
+
+### Phase 4: Present and Save
+
+1. Present the formatted learnings to the user
+2. Use `AskUserQuestion` to ask:
+   - Which learnings should be saved?
+   - Where should they go? Options:
+     - Project's CLAUDE.md (project-specific)
+     - A new skill in this plugin (reusable pattern)
+     - User's personal notes (general knowledge)
+
+3. Based on user selection, either:
+   - Append to the specified location
+   - Output for user to save manually
+
+## Example Output
+
+```markdown
+### TypeScript Path Aliases
+
+**Context:** When setting up monorepo imports
+**Learning:** Use `@/` prefix for internal imports, configured in tsconfig.json paths
+**Example:**
+```typescript
+import { Button } from '@/components/Button';
+```
+**Source:** Discovered while setting up feature-x (commit abc123)
+```

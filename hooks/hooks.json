@@ -1,6 +1,16 @@
 {
   "description": "Workflow hooks for kramme-cc-workflow plugin",
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/session-restore.sh"
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Bash",
@@ -28,6 +38,15 @@
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/noninteractive-git.sh"
           }
         ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/suggest-compact.sh"
+          }
+        ]
       }
     ],
     "PostToolUse": [
@@ -39,9 +58,34 @@
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/auto-format.sh"
           }
         ]
+      },
+      {
+        "matcher": "Write|Edit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/log-changes.sh"
+          }
+        ]
       }
     ],
     "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/session-save.sh"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/extract-learnings.sh"
+          }
+        ]
+      },
       {
         "hooks": [
           {
