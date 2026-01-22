@@ -38,6 +38,7 @@ A Claude Code plugin providing tooling for daily workflow tasks. These are the p
 | `/kramme:resolve-review-findings` | Resolve findings from code reviews. Evaluates each finding for scope and validity, implements fixes, and generates a response document. |
 | `/kramme:explore-interview` | Conduct an in-depth interview about a topic/proposal to uncover requirements. Uses structured questioning to explore features, processes, or architecture decisions. |
 | `/kramme:review-pr` | Run comprehensive PR review using specialized agents. Supports reviewing comments, tests, errors, types, and code quality. Can run agents sequentially or in parallel. |
+| `/kramme:granola-meeting-notes` | Query meeting notes from Granola. Supports fuzzy search, pattern analysis (top collaborators, weekly trends, topics), transcript stats, and markdown export. |
 
 ## Agents
 
@@ -61,6 +62,7 @@ Skills are auto-triggered based on context. Claude will invoke these automatical
 | Skill | Trigger Condition |
 |-------|-------------------|
 | `kramme:changelog-generator` | Generate user-facing changelogs from git commits, transforming technical commits into clear release notes |
+| `kramme:granola-meeting-notes` | Query Granola meetings with fuzzy search, pattern analysis, transcript stats, and export. Triggers on "meetings", "who do I meet with", "meeting patterns" |
 | `kramme:connect-existing-feature-documentation-writer` | Creating or updating documentation for Connect features |
 | `kramme:connect-migrate-legacy-store-to-ngrx-component-store` | Migrating legacy CustomStore/FeatureStore to NgRx ComponentStore in Connect monorepo |
 | `kramme:connect-modernize-legacy-angular-component` | Modernizing legacy Angular components in Connect monorepo |
@@ -708,6 +710,7 @@ For maintainers: see [RELEASE.md](RELEASE.md) for the release process.
 ## Attribution
 
 - `kramme:humanize-text`: Based on Wikipedia: Signs of AI writing (maintained by WikiProject AI Cleanup) and heavily inspired by [blader/humanizer](https://github.com/blader/humanizer).
+- `kramme:granola-meeting-notes`: Inspired by [varadhjain/granola-claude-plugin](https://github.com/varadhjain/granola-claude-plugin) and [nehiljain/granola-ai-mcp-server](https://github.com/nehiljain/granola-ai-mcp-server).
 
 ## License
 
