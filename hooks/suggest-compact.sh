@@ -1,6 +1,10 @@
 #!/bin/bash
 # Strategic Compact Suggester - suggests /compact after N tool calls
 #
+# Check if hook is enabled
+source "${CLAUDE_PLUGIN_ROOT}/hooks/lib/check-enabled.sh"
+exit_if_hook_disabled "suggest-compact" "json"
+#
 # Runs on PreToolUse for all tools. Tracks tool invocations in a counter file
 # and suggests compacting context at regular intervals.
 #

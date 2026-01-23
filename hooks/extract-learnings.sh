@@ -1,6 +1,10 @@
 #!/bin/bash
 # Learning Extraction Prompt Hook - suggests /kramme:learn at session end
 #
+# Check if hook is enabled
+source "${CLAUDE_PLUGIN_ROOT}/hooks/lib/check-enabled.sh"
+exit_if_hook_disabled "extract-learnings" "json"
+#
 # Runs on Stop. Checks if the session had meaningful work (via changes.log)
 # and suggests extracting learnings if substantial work was done.
 #

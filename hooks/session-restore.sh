@@ -1,6 +1,10 @@
 #!/bin/bash
 # Session Restore Hook - loads previous session state on SessionStart
 #
+# Check if hook is enabled
+source "${CLAUDE_PLUGIN_ROOT}/hooks/lib/check-enabled.sh"
+exit_if_hook_disabled "session-restore" "json"
+#
 # Checks for .claude-session/session.md in working directory and returns
 # its contents as a systemMessage to provide context from previous sessions.
 

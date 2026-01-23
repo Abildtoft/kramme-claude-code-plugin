@@ -1,6 +1,10 @@
 #!/bin/bash
 # Change Logger Hook - logs file modifications for session awareness
 #
+# Check if hook is enabled
+source "${CLAUDE_PLUGIN_ROOT}/hooks/lib/check-enabled.sh"
+exit_if_hook_disabled "log-changes" "json"
+#
 # Runs on PostToolUse for Write, Edit, and Bash tools.
 # Appends to .claude-session/changes.log for session review and debugging.
 #

@@ -1,6 +1,10 @@
 #!/bin/bash
 # Session Save Hook - saves session state on Stop
 #
+# Check if hook is enabled
+source "${CLAUDE_PLUGIN_ROOT}/hooks/lib/check-enabled.sh"
+exit_if_hook_disabled "session-save" "json"
+#
 # Creates .claude-session/session.md with:
 # - Timestamp
 # - Current branch
