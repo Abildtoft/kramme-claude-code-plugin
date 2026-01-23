@@ -68,6 +68,7 @@ Skills are auto-triggered based on context. Claude will invoke these automatical
 | `kramme:granola-meeting-notes` | Query Granola meetings (macOS, Windows; Windows is untested) with fuzzy search, pattern analysis, transcript stats, and export. Triggers on "meetings", "who do I meet with", "meeting patterns" |
 | `kramme:connect-existing-feature-documentation-writer` | Creating or updating documentation for Connect features |
 | `kramme:connect-migrate-legacy-store-to-ngrx-component-store` | Migrating legacy CustomStore/FeatureStore to NgRx ComponentStore in Connect monorepo |
+| `kramme:connect-extract-to-nx-libraries` | Extracting app code from `apps/connect/` into proper Nx libraries |
 | `kramme:connect-modernize-legacy-angular-component` | Modernizing legacy Angular components in Connect monorepo |
 | `kramme:humanize-text` | Remove signs of AI-generated writing from text to make it sound more natural and human-written |
 | `kramme:markdown-converter` | Converting documents (PDF, Word, Excel, images, audio, etc.) to Markdown using markitdown |
