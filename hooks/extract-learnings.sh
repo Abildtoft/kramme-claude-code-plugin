@@ -16,9 +16,10 @@ if [ -f "$CHANGES_LOG" ]; then
     # Only suggest extraction for substantial sessions (>10 changes)
     if [ "${CHANGE_COUNT:-0}" -gt 10 ]; then
         echo "{\"systemMessage\": \"$CHANGE_COUNT changes logged this session. Consider /kramme:learn to extract reusable patterns.\"}"
-        exit 0
+    else
+        echo '{}'
     fi
+else
+    echo '{}'
 fi
-
-echo '{}'
 exit 0

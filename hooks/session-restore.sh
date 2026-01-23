@@ -8,7 +8,8 @@ SESSION_FILE=".claude-session/session.md"
 
 if [ -f "$SESSION_FILE" ]; then
     # Read content (limit to first 50 lines to avoid overwhelming context)
-    content=$(head -50 "$SESSION_FILE" | sed 's/"/\\"/g' | tr '\n' ' ')
+    # Escape backslashes first, then quotes, then convert newlines to spaces
+    content=$(head -50 "$SESSION_FILE" | sed 's/\\/\\\\/g; s/"/\\"/g' | tr '\n' ' ')
 
     if [ -n "$content" ]; then
         printf '{"systemMessage": "Previous session state found:\\n\\n%s"}' "$content"

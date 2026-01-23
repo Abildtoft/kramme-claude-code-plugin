@@ -55,14 +55,12 @@ For each learning, create a structured entry:
 
 ## Example Output
 
-```markdown
-### TypeScript Path Aliases
+    ### TypeScript Path Aliases
 
-**Context:** When setting up monorepo imports
-**Learning:** Use `@/` prefix for internal imports, configured in tsconfig.json paths
-**Example:**
-```typescript
-import { Button } from '@/components/Button';
-```
-**Source:** Discovered while setting up feature-x (commit abc123)
-```
+    **Context:** When setting up monorepo imports
+    **Learning:** Use `@/` prefix for internal imports, configured in tsconfig.json paths
+    **Example:**
+    ```typescript
+    import { Button } from '@/components/Button';
+    ```
+    **Source:** Discovered while setting up feature-x (commit abc123)
