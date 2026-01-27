@@ -51,12 +51,15 @@ Specialized subagents for PR review tasks. These are invoked by the `/kramme:rev
 |-------|-------------|
 | `kramme:code-reviewer` | Reviews code for bugs, style violations, and CLAUDE.md compliance. Uses confidence scoring (0-100) to filter issues. |
 | `kramme:code-simplifier` | Simplifies code for clarity and maintainability while preserving functionality. Applies project standards automatically. |
+| `kramme:design-iterator` | Iterative UI/UX design refinement. Takes screenshots, analyzes issues, implements improvements, and repeats N times. Use proactively when design changes don't come together on the first attempt. |
 | `kramme:comment-analyzer` | Analyzes code comments for accuracy, completeness, and long-term maintainability. Guards against comment rot. |
 | `kramme:deslop-reviewer` | Detects AI-generated code patterns ("slop"). Operates in two modes: code review (scans PR diff) and meta-review (validates other agents' suggestions won't introduce slop). |
 | `kramme:pr-relevance-validator` | Validates that review findings are actually caused by the PR. Filters pre-existing issues and out-of-scope problems to prevent scope creep. |
 | `kramme:pr-test-analyzer` | Reviews test coverage quality and completeness. Focuses on behavioral coverage and critical gaps. |
 | `kramme:silent-failure-hunter` | Identifies silent failures, inadequate error handling, and inappropriate fallbacks. Zero tolerance for swallowed errors. |
 | `kramme:type-design-analyzer` | Analyzes type design for encapsulation, invariant expression, usefulness, and enforcement. Rates each dimension 1-10. |
+| `kramme:architecture-strategist` | Analyzes code changes from an architectural perspective. Reviews system design decisions, evaluates component boundaries, and ensures alignment with established patterns. |
+| `kramme:performance-oracle` | Analyzes code for performance issues, bottlenecks, and scalability. Covers algorithmic complexity, database queries, memory management, caching, and network optimization. |
 
 ## Skills
 
@@ -64,7 +67,7 @@ Skills are auto-triggered based on context. Claude will invoke these automatical
 
 | Skill | Trigger Condition |
 |-------|-------------------|
-| `kramme:changelog-generator` | Generate user-facing changelogs from git commits, transforming technical commits into clear release notes |
+| `kramme:changelog-generator` | Create engaging daily/weekly changelogs from recent merges to main, with contributor shoutouts and audience-aware formatting |
 | `kramme:granola-meeting-notes` | Query Granola meetings (macOS, Windows; Windows is untested) with fuzzy search, pattern analysis, transcript stats, and export. Triggers on "meetings", "who do I meet with", "meeting patterns" |
 | `kramme:connect-existing-feature-documentation-writer` | Creating or updating documentation for Connect features |
 | `kramme:connect-migrate-legacy-store-to-ngrx-component-store` | Migrating legacy CustomStore/FeatureStore to NgRx ComponentStore in Connect monorepo |
@@ -775,8 +778,11 @@ For maintainers: see [RELEASE.md](RELEASE.md) for the release process.
 
 ## Attribution
 
+- `kramme:architecture-strategist`: Adapted from [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin).
+- `kramme:design-iterator`: Adapted from [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin).
 - `kramme:humanize-text`: Based on Wikipedia: Signs of AI writing (maintained by WikiProject AI Cleanup) and heavily inspired by [blader/humanizer](https://github.com/blader/humanizer).
 - `kramme:granola-meeting-notes`: Inspired by [varadhjain/granola-claude-plugin](https://github.com/varadhjain/granola-claude-plugin) and [nehiljain/granola-ai-mcp-server](https://github.com/nehiljain/granola-ai-mcp-server).
+- `kramme:performance-oracle`: From [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin).
 - OpenCode/Codex converter: Inspired by [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin).
 
 ## License
