@@ -603,10 +603,11 @@ function renderHookStatements(matcher, useToolMatcher) {
 
   for (const hook of matcher.hooks) {
     if (hook.type === "command") {
+      const escapedCommand = escapeTemplateLiteral(String(hook.command ?? ""))
       if (condition) {
-        statements.push(`if (${condition}) { await $\`${hook.command}\` }`)
+        statements.push(`if (${condition}) { await $\`${escapedCommand}\` }`)
       } else {
-        statements.push(`await $\`${hook.command}\``)
+        statements.push(`await $\`${escapedCommand}\``)
       }
       if (hook.timeout) {
         statements.push(`// timeout: ${hook.timeout}s (not enforced)`)
@@ -758,6 +759,10 @@ function normalizePattern(tool, pattern) {
   return pattern
 }
 
+function escapeTemplateLiteral(value) {
+  return String(value).replace(/[`\\]/g, "\\$&").replace(/\$\{/g, "\\${")
+}
+
 function convertClaudeToCodex(plugin, options) {
   const promptNames = new Set()
   const skillDirs = plugin.skills.map((skill) => ({
@@ -766,12 +771,13 @@ function convertClaudeToCodex(plugin, options) {
   }))
 
   const usedSkillNames = new Set(skillDirs.map((skill) => normalizeName(skill.name)))
+  const knownCommands = new Set(plugin.commands.map((command) => normalizeName(command.name)))
   const commandSkills = []
   const prompts = plugin.commands.map((command) => {
     const promptName = uniqueName(normalizeName(command.name), promptNames)
-    const commandSkill = convertCommandSkill(command, usedSkillNames)
+    const commandSkill = convertCommandSkill(command, usedSkillNames, knownCommands)
     commandSkills.push(commandSkill)
-    const content = renderPrompt(command, commandSkill.name)
+    const content = renderPrompt(command, commandSkill.name, knownCommands)
     return { name: promptName, content }
   })
 
@@ -808,7 +814,7 @@ function convertAgentSkill(agent, usedNames) {
   return { name, content }
 }
 
-function convertCommandSkill(command, usedNames) {
+function convertCommandSkill(command, usedNames, knownCommands) {
   const name = uniqueName(normalizeName(command.name), usedNames)
   const frontmatter = {
     name,
@@ -823,15 +829,16 @@ function convertCommandSkill(command, usedNames) {
   if (command.allowedTools && command.allowedTools.length > 0) {
     sections.push(`## Allowed tools\n${command.allowedTools.map((tool) => `- ${tool}`).join("\n")}`)
   }
-  const transformedBody = transformContentForCodex(command.body.trim())
+  const transformedBody = transformContentForCodex(command.body.trim(), { knownCommands })
   sections.push(transformedBody)
   const body = sections.filter(Boolean).join("\n\n").trim()
   const content = formatFrontmatter(frontmatter, body.length > 0 ? body : command.body)
   return { name, content }
 }
 
-function transformContentForCodex(body) {
+function transformContentForCodex(body, options = {}) {
   let result = body
+  const knownCommands = options.knownCommands
 
   const taskPattern = /^(\s*-?\s*)Task\s+([a-z][a-z0-9-]*)\(([^)]+)\)/gm
   result = result.replace(taskPattern, (_match, prefix, agentName, args) => {
@@ -845,6 +852,7 @@ function transformContentForCodex(body) {
     if (commandName.includes("/")) return match
     if (["dev", "tmp", "etc", "usr", "var", "bin", "home"].includes(commandName)) return match
     const normalizedName = normalizeName(commandName)
+    if (knownCommands && !knownCommands.has(normalizedName)) return match
     return `/prompts:${normalizedName}`
   })
 
@@ -857,13 +865,13 @@ function transformContentForCodex(body) {
   return result
 }
 
-function renderPrompt(command, skillName) {
+function renderPrompt(command, skillName, knownCommands) {
   const frontmatter = {
     description: command.description,
     "argument-hint": command.argumentHint,
   }
   const instructions = `Use the $${skillName} skill for this command and follow its instructions.`
-  const transformedBody = transformContentForCodex(command.body)
+  const transformedBody = transformContentForCodex(command.body, { knownCommands })
   const body = [instructions, "", transformedBody].join("\n").trim()
   return formatFrontmatter(frontmatter, body)
 }
