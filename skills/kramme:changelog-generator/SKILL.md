@@ -47,8 +47,7 @@ Now, create a change log summary with the following guidelines:
 5. Mention the names of contributors, giving them credit for their work
 6. Add a touch of humor or playfulness to make it engaging
 7. Use emojis sparingly to add visual interest
-8. Keep total message under 2000 characters for Discord
-9. Use consistent emoji for each section
+8. Use consistent emoji for each section
 10. Format code/technical terms in backticks
 11. Include PR numbers in parentheses (e.g., "Fixed login bug (#123)")
 
@@ -99,27 +98,10 @@ Now review the changelog using the EVERY_WRITE_STYLE.md file and go one by one t
 
 Remember, your final output should only include the content within the <change_log> tags. Do not include any of your thought process or the original data in the output.
 
-## Discord Posting (Optional)
-
-You can post changelogs to Discord by adding your own webhook URL:
-
-```
-# Set your Discord webhook URL
-DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
-
-# Post using curl
-curl -H "Content-Type: application/json" \
-  -d "{\"content\": \"{{CHANGELOG}}\"}" \
-  $DISCORD_WEBHOOK_URL
-```
-
-To get a webhook URL, go to your Discord server → Server Settings → Integrations → Webhooks → New Webhook.
-
 ## Error Handling
 
 - If no changes in the time period, post a "quiet day" message: "Quiet day! No new changes merged."
 - If unable to fetch PR details, list the PR numbers for manual review
-- Always validate message length before posting to Discord (max 2000 chars)
 
 ## Schedule Recommendations
 
