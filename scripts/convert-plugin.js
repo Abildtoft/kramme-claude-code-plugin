@@ -80,7 +80,8 @@ async function main() {
     throw new Error(`Unknown permissions mode: ${permissions}`)
   }
 
-  const plugin = await loadClaudePlugin(pluginInput)
+  const resolvedPluginPath = await resolvePluginInput(pluginInput)
+  const plugin = await loadClaudePlugin(resolvedPluginPath)
   const outputRoot = resolveOutputRoot(parsed.output ?? parsed.o)
   const codexHome = resolveCodexRoot(parsed["codex-home"] ?? parsed.codexHome)
   const options = {
@@ -122,7 +123,7 @@ async function main() {
 }
 
 function printHelp(exitCode) {
-  const help = `Usage: scripts/convert-plugin.js install <plugin-path> [options]
+  const help = `Usage: scripts/convert-plugin.js install <plugin-name|path> [options]
 
 Options:
   --to <target>           Target format: opencode | codex (default: opencode)
@@ -218,6 +219,42 @@ function expandHome(value) {
     return path.join(os.homedir(), value.slice(2))
   }
   return value
+}
+
+async function resolvePluginInput(input) {
+  const directPath = path.resolve(String(input))
+  if (await pathExists(directPath)) return directPath
+
+  const slug = String(input ?? "").trim()
+  if (!slug) {
+    throw new Error("Plugin name or path is required.")
+  }
+
+  const rootCandidates = [process.cwd(), resolveScriptRoot()]
+  for (const root of rootCandidates) {
+    const marketplaceResolved = await resolveMarketplacePlugin(root, slug)
+    if (marketplaceResolved) return marketplaceResolved
+
+    const pluginsDirResolved = path.join(root, "plugins", slug)
+    if (await pathExists(pluginsDirResolved)) return pluginsDirResolved
+  }
+
+  throw new Error(`Could not resolve plugin "${slug}".`)
+}
+
+function resolveScriptRoot() {
+  return path.resolve(__dirname, "..")
+}
+
+async function resolveMarketplacePlugin(root, slug) {
+  const marketplacePath = path.join(root, ".claude-plugin", "marketplace.json")
+  if (!(await pathExists(marketplacePath))) return null
+  const marketplace = await readJson(marketplacePath)
+  const plugins = Array.isArray(marketplace.plugins) ? marketplace.plugins : []
+  const entry = plugins.find((plugin) => plugin?.name === slug)
+  if (!entry) return null
+  const source = entry.source ?? "."
+  return resolveWithinRoot(root, source, "marketplace plugin source")
 }
 
 async function loadClaudePlugin(inputPath) {

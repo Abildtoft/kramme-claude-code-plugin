@@ -301,24 +301,24 @@ claude /plugin install /path/to/kramme-cc-workflow
 ### OpenCode + Codex (experimental)
 
 This repo includes a converter CLI (Node.js) that installs the plugin into OpenCode or Codex.
-Requires Node.js 18+.
+Requires Node.js 18+. Use the plugin name from `.claude-plugin/marketplace.json` (here: `kramme-cc-workflow`).
 
 ```bash
 # OpenCode
-node scripts/convert-plugin.js install /path/to/kramme-cc-workflow --to opencode
+node scripts/convert-plugin.js install kramme-cc-workflow --to opencode
 
 # Codex
-node scripts/convert-plugin.js install /path/to/kramme-cc-workflow --to codex
+node scripts/convert-plugin.js install kramme-cc-workflow --to codex
 ```
 
 Run with npx (no clone):
 
 ```bash
 # OpenCode
-npx --yes github:Abildtoft/kramme-cc-workflow install . --to opencode
+npx --yes github:Abildtoft/kramme-cc-workflow install kramme-cc-workflow --to opencode
 
 # Codex
-npx --yes github:Abildtoft/kramme-cc-workflow install . --to codex
+npx --yes github:Abildtoft/kramme-cc-workflow install kramme-cc-workflow --to codex
 ```
 
 Local dev from this repo:
