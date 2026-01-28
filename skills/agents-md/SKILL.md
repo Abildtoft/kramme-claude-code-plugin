@@ -33,6 +33,7 @@ Strictness hierarchy: ALWAYS/NEVER > PREFER > CAN > NOTE/EXAMPLE
 
 ## Writing Rules
 
+- **Existing sections first** - Only propose new sections if no appropriate existing section exists
 - **One rule per bullet** - Keep each guideline minimal and atomic
 - **Start with keyword** - Every rule begins with ALWAYS/NEVER/PREFER/CAN/NOTE
 - **Headers + bullets** - No paragraphs
