@@ -43,7 +43,7 @@ if echo "$stripped_command" | grep -qE '\bgit[[:space:]]+add[[:space:]]+.*(-p\b|
 fi
 
 # --- git merge without --no-edit (can open editor for merge commit) ---
-if echo "$stripped_command" | grep -qE '\bgit[[:space:]]+merge\b'; then
+if echo "$stripped_command" | grep -qE '\bgit[[:space:]]+merge([[:space:]]|$)'; then
     # Only block if not using --no-edit, --no-commit, or squash/ff modes
     # Use -- to prevent grep from treating --no-edit as an option
     if ! echo "$stripped_command" | grep -qE -- '--no-edit|--no-commit|--squash|--ff-only|--ff[[:space:]]|--ff$'; then
