@@ -39,6 +39,7 @@ A Claude Code plugin providing tooling for daily workflow tasks. These are the C
 | `/kramme:recreate-commits` | Recreate current branch in-place with narrative-quality commits and logical, reviewer-friendly commit history. |
 | `/kramme:resolve-review-findings` | Resolve findings from code reviews. Evaluates each finding for scope and validity, implements fixes, and generates a response document. |
 | `/kramme:explore-interview` | Conduct an in-depth interview about a topic/proposal to uncover requirements. Uses structured questioning to explore features, processes, or architecture decisions. |
+| `/kramme:extract-learnings` | Extract non-obvious learnings from session to AGENTS.md files. Presents suggestions for approval before making changes. |
 | `/kramme:review-pr` | Run comprehensive PR review using specialized agents. Supports reviewing comments, tests, errors, types, and code quality. Can run agents sequentially or in parallel. |
 | `/kramme:granola-meeting-notes` | Query meeting notes from Granola (macOS, Windows; Windows is untested). Supports fuzzy search, pattern analysis, transcript stats, and markdown export. |
 | `/kramme:toggle-hook` | Enable or disable a plugin hook. Use `status` to list all hooks, or specify a hook name to toggle. |
