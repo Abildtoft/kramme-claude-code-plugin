@@ -302,6 +302,41 @@ For local development:
 claude /plugin install /path/to/kramme-cc-workflow
 ```
 
+### OpenCode + Codex (experimental)
+
+This repo includes a converter CLI (Node.js) that installs the plugin into OpenCode or Codex.
+Requires Node.js 18+. Use the plugin name from `.claude-plugin/marketplace.json` (here: `kramme-cc-workflow`).
+
+```bash
+# OpenCode
+node scripts/convert-plugin.js install kramme-cc-workflow --to opencode
+
+# Codex
+node scripts/convert-plugin.js install kramme-cc-workflow --to codex
+```
+
+Run with npx (no clone):
+
+```bash
+# OpenCode
+npx --yes github:Abildtoft/kramme-cc-workflow install kramme-cc-workflow --to opencode
+
+# Codex
+npx --yes github:Abildtoft/kramme-cc-workflow install kramme-cc-workflow --to codex
+```
+
+Local dev from this repo:
+
+```bash
+./scripts/install-opencode.sh
+./scripts/install-codex.sh
+```
+
+Helper scripts forward additional args to the converter (e.g., `--output`, `--codex-home`, `--also codex`).
+
+OpenCode output defaults to `~/.config/opencode` (XDG). Codex output defaults to `~/.codex` (`prompts/` and `skills/`).
+Both targets are experimental and may change as the formats evolve.
+
 ### Updating
 
 For marketplace installs:
@@ -749,6 +784,7 @@ For maintainers: see [RELEASE.md](RELEASE.md) for the release process.
 - `kramme:humanize-text`: Based on Wikipedia: Signs of AI writing (maintained by WikiProject AI Cleanup) and heavily inspired by [blader/humanizer](https://github.com/blader/humanizer).
 - `kramme:granola-meeting-notes`: Inspired by [varadhjain/granola-claude-plugin](https://github.com/varadhjain/granola-claude-plugin) and [nehiljain/granola-ai-mcp-server](https://github.com/nehiljain/granola-ai-mcp-server).
 - `kramme:performance-oracle`: From [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin).
+- OpenCode/Codex converter: Inspired by [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin).
 
 ## License
 
